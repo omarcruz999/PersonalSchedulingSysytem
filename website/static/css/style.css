@@ -1,0 +1,24 @@
+/* Styling for addTaskButton */
+
+#addTaskButtonDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(145, 145, 145);
+    width: 5em;
+    height: 5em;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    margin: 40px;
+    text-align: center;
+}
+
+#addTaskButtonDiv span{
+    font-size: 5em;
+    margin-bottom: 0.1em;
+    color: white;
+}
+
+/* end addTaskButton */
