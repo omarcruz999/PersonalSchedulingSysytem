@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchTasks, deleteTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
@@ -49,18 +51,24 @@ export default function HomePage() {
             </div>
           </div>
         </header>
-                  {/* List Of Tasks */}
-          
-                  <TaskList tasks={tasks} onDelete={handleDelete} />
+
+        {/* List Of Tasks */}
+        <TaskList tasks={tasks} onDelete={handleDelete} />
       </div>
 
       {/* Add A Task Button */}
-      <button title="Add A Task" data-modal-target="addTaskModal" data-modal-toggle="addTaskModal">
-        <div id="addTaskButtonDiv">
-            <span>+</span>
-        </div>
-    </button>
-    
+      <div className="fixed bottom-6 right-12 rounded-full bg-gray-500 hover:bg-gray-800 hover:opacity-80 active:opacity-50">
+        <Link href="/create-task">
+          <button className="p-2">
+            <Image 
+              src="/static/images/Add Icon.svg"        
+              width={70}
+              height={70}
+              alt="Add Task"
+            />
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }
