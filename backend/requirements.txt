@@ -1,0 +1,3 @@
+# Install the following packages
+pip install flask
+pip install flask-cors

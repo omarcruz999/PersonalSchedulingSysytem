@@ -1,2 +1,0 @@
-class Viewer:
-    pass
