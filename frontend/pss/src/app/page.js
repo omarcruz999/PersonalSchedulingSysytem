@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchTasks, deleteTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
-import "../styles/globals.css";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
@@ -67,8 +66,9 @@ export default function HomePage() {
               alt="Add Task"
             />
           </button>
-        </Link>
+        </Link>      
       </div>
     </div>
   );
+  
 }
