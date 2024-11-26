@@ -26,7 +26,7 @@ export default function TaskForm({ onSubmit }) {
         <div>
           <label
             htmlFor="addATaskName"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-white"
           >
             Name
           </label>
@@ -36,7 +36,7 @@ export default function TaskForm({ onSubmit }) {
             id="addATaskName"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
             placeholder="Enter Task name"
             required
           />
@@ -48,7 +48,7 @@ export default function TaskForm({ onSubmit }) {
           <div className="w-1/2">
             <label
               htmlFor="addATaskType"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               Type
             </label>
@@ -57,7 +57,7 @@ export default function TaskForm({ onSubmit }) {
               value={type}
               onChange={(e) => setType(e.target.value)}
               required
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              className= "border text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
             >
               <option value="">Select type</option>
               <option value="recurring">Recurring Task</option>
@@ -70,7 +70,7 @@ export default function TaskForm({ onSubmit }) {
           <div className="w-1/2">
             <label
               htmlFor="addATaskFrequency"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               Frequency
             </label>
@@ -119,7 +119,7 @@ export default function TaskForm({ onSubmit }) {
           <div className="w-1/2">
             <label
               htmlFor="addATaskStartDate"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               Start Date
             </label>
@@ -127,7 +127,7 @@ export default function TaskForm({ onSubmit }) {
               type="date"
               name="addATaskStartDate"
               id="addATaskStartDate"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Date"
               required
             />
@@ -137,7 +137,7 @@ export default function TaskForm({ onSubmit }) {
           <div className="w-1/2">
             <label
               htmlFor="addATaskEndDate"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               End Date
             </label>
@@ -145,7 +145,7 @@ export default function TaskForm({ onSubmit }) {
               type="date"
               name="addATaskEndDate"
               id="addATaskEndDate"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Date"
               required
             />
@@ -158,7 +158,7 @@ export default function TaskForm({ onSubmit }) {
           <div className="w-1/2">
             <label
               htmlFor="addATaskStartTime"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               Start Time
             </label>
@@ -169,7 +169,7 @@ export default function TaskForm({ onSubmit }) {
               min="00:00"
               max="23:45"
               step="900"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Time"
               required
             />
@@ -179,7 +179,7 @@ export default function TaskForm({ onSubmit }) {
           <div className="w-1/2">
             <label
               htmlFor="addATaskDuration"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              className="block mb-2 text-sm font-medium text-white"
             >
               Duration (minutes)
             </label>
@@ -190,7 +190,7 @@ export default function TaskForm({ onSubmit }) {
               defaultValue="15"
               step="15"
               min="0"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter Duration"
               required
             />
@@ -201,7 +201,7 @@ export default function TaskForm({ onSubmit }) {
         <div>
           <label
             htmlFor="addATaskDescription"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-white"
           >
             Description
           </label>
@@ -211,7 +211,7 @@ export default function TaskForm({ onSubmit }) {
             id="addATaskDescription"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
             placeholder="Enter Description"
             required
           />
@@ -221,7 +221,7 @@ export default function TaskForm({ onSubmit }) {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white inline-flex items-center focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
           >
             Add New Task
           </button>
