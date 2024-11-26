@@ -64,7 +64,7 @@ export default function TaskList({ tasks, onDelete }) {
           ))}
         </ul>
       ) : (
-        <p>No tasks available. Create one!</p>
+        <p className="pt-6 text-3xl">No tasks available. Create one!</p>
       )}
     </div>
   );
