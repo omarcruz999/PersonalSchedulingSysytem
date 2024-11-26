@@ -57,7 +57,7 @@ export default function TaskForm({ onSubmit }) {
               value={type}
               onChange={(e) => setType(e.target.value)}
               required
-              className= "border text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
+              className="border text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
             >
               <option value="">Select type</option>
               <option value="recurring">Recurring Task</option>
@@ -67,50 +67,52 @@ export default function TaskForm({ onSubmit }) {
           </div>
 
           {/* Frequency Field */}
-          <div className="w-1/2">
-            <label
-              htmlFor="addATaskFrequency"
-              className="block mb-2 text-sm font-medium text-white"
-            >
-              Frequency
-            </label>
-            <div className="flex space-x-4">
-              <div className="flex items-center">
-                <input
-                  className="form-check-input h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                  type="radio"
-                  name="frequency"
-                  id="frequencyDailyRadio"
-                  value="daily"
-                  checked={frequency === "daily"}
-                  onChange={(e) => setFrequency(e.target.value)}
-                />
-                <label
-                  className="ml-2 text-sm text-white"
-                  htmlFor="frequencyDailyRadio"
-                >
-                  Daily
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  className="form-check-input h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                  type="radio"
-                  name="frequency"
-                  id="frequencyWeeklyRadio"
-                  value="weekly"
-                  checked={frequency === "weekly"}
-                  onChange={(e) => setFrequency(e.target.value)}
-                />
-                <label
-                  className="ml-2 text-sm text-white"
-                  htmlFor="frequencyWeeklyRadio"
-                >
-                  Weekly
-                </label>
+          {type === "recurring" && (
+            <div className="w-1/2">
+              <label
+                htmlFor="addATaskFrequency"
+                className="block mb-2 text-sm font-medium text-white"
+              >
+                Frequency
+              </label>
+              <div className="flex space-x-4">
+                <div className="flex items-center">
+                  <input
+                    className="form-check-input h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    type="radio"
+                    name="frequency"
+                    id="frequencyDailyRadio"
+                    value="daily"
+                    checked={frequency === "daily"}
+                    onChange={(e) => setFrequency(e.target.value)}
+                  />
+                  <label
+                    className="ml-2 text-sm text-white"
+                    htmlFor="frequencyDailyRadio"
+                  >
+                    Daily
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    className="form-check-input h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    type="radio"
+                    name="frequency"
+                    id="frequencyWeeklyRadio"
+                    value="weekly"
+                    checked={frequency === "weekly"}
+                    onChange={(e) => setFrequency(e.target.value)}
+                  />
+                  <label
+                    className="ml-2 text-sm text-white"
+                    htmlFor="frequencyWeeklyRadio"
+                  >
+                    Weekly
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Start Date and End Date Fields */}
@@ -134,6 +136,8 @@ export default function TaskForm({ onSubmit }) {
           </div>
 
           {/* End Date */}
+
+          {type === "recurring" && (
           <div className="w-1/2">
             <label
               htmlFor="addATaskEndDate"
@@ -150,6 +154,7 @@ export default function TaskForm({ onSubmit }) {
               required
             />
           </div>
+          )}
         </div>
 
         {/* Start Time and Duration Fields */}
