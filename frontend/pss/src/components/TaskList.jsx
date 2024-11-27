@@ -1,20 +1,12 @@
-export default function TaskList({ tasks, onDelete }) {
+export default function TaskList({ tasks, onDelete, onEdit }) {
   return (
     <div>
       {tasks.length > 0 ? (
         <ul>
           {tasks.map((task) => (
             <li key={task.id}>
-              {/* <h2 className="text-lg font-medium">{task.title}</h2>
-              <p>{task.description}</p>
-              <span className="text-sm">Type: {task.type}</span>
-              {task.frequency && <span> | Frequency: {task.frequency}</span>}
-              <button
-                onClick={() => onDelete(task.id)}
-                className="text-red-500 ml-4"
-              >
-                Delete
-              </button> */}
+
+              {/* Task Card */}
               <main className="bg-white shadow rounded-lg">
                 <div className="p-4 border-b space-y-4 rounded-lg">
                   <div className="flex justify-between">
@@ -24,13 +16,13 @@ export default function TaskList({ tasks, onDelete }) {
                       <button className="font-medium text-black" style={{ display: "inline" }}
                         data-modal-target="editTaskModal" data-modal-toggle="editTaskModal" id="taskName">{task.title}</button>
                       {/* Task Times (Start Time + End Time) shows duration */}
-                      <p className="text-sm text-gray-500" id="taskTime">at 9 am to 10 pm</p>
+                      <p className="text-sm text-gray-500" id="taskTime">at {task.start_time} to {task.duration}</p>
                     </div>
                     
                     <div className="flex flex-col items-end">
                       {/* Task Date */}
                       <h2 className="font-medium text-black text-right min-h-[1.5rem]" id="taskDayName">Today</h2>
-                      <p className="text-sm text-gray-500 text-right" id="taskDates">11/22/2024</p>
+                      <p className="text-sm text-gray-500 text-right" id="taskDates">{task.start_date}</p>
                     </div>
                   
                   </div>
@@ -49,16 +41,31 @@ export default function TaskList({ tasks, onDelete }) {
                         </div>
                       </div>
 
-                        {/* Delete Button */}
-                      <div className="text-sm text-gray-500">
-                        <button id="taskDeleteButton" data-modal-target="deleteModal"
-                          data-modal-toggle="deleteModal" style={{ color: "red" }} onClick={() => onDelete(task.id)}>Delete</button>
-                      </div>
+                      {/* Edit Button */}
+                      <button
+                          onClick={() =>
+                              onEdit(task.id, {
+                                  title: "Updated Task Title",
+                                  description: "Updated description",
+                              })
+                          }
+                          className="text-blue-500"
+                      >
+                          Edit
+                      </button>
+
+                      {/* Delete Button */}
+                      <button
+                          onClick={() => onDelete(task.id)}
+                          className="text-red-500 ml-2"
+                      >
+                          Delete
+                      </button>
+                      
                     </div>
                   </div>
                 </div>
               </main>
-
 
             </li>
           ))}

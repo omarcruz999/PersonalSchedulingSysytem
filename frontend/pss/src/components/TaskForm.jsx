@@ -5,18 +5,43 @@ export default function TaskForm({ onSubmit }) {
   const [description, setDescription] = useState("");
   const [type, setType] = useState("transient");
   const [frequency, setFrequency] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [duration, setDuration] = useState(0);
+  const [cancelledTaskId, setCancelledTaskId] = useState(""); // For Anti-Task
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const taskData = { title, description, type };
+    const taskData = { 
+      title, 
+      description, 
+      type,
+      start_date: startDate,
+      start_time: startTime,
+      duration,
+    };
+
+    taskData.duration = Number(duration);
+
     if (type === "recurring") {
       taskData.frequency = frequency;
+      taskData.end_date = endDate;
+    } else if (type === "anti") {
+      taskData.cancelled_task_id = cancelledTaskId;
     }
+
     onSubmit(taskData);
+
     setTitle("");
     setDescription("");
     setType("transient");
     setFrequency("");
+    setStartDate("");
+    setEndDate("");
+    setStartTime("");
+    setDuration(0);
+    setCancelledTaskId("");
   };
 
   return (
@@ -115,6 +140,23 @@ export default function TaskForm({ onSubmit }) {
           )}
         </div>
 
+        {/* Cancelled Task ID Field for Anti-Tasks */}
+        {type === "anti" && (
+          <div>
+              <label htmlFor="addCancelledTaskId" className="block mb-2 text-sm font-medium text-white">
+                  Cancelled Task ID
+              </label>
+              <input
+                  type="text"
+                  id="addCancelledTaskId"
+                  value={cancelledTaskId}
+                  onChange={(e) => setCancelledTaskId(e.target.value)}
+                  placeholder="Enter Cancelled Task ID"
+                  className="border text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 text-white"
+              />
+          </div>
+        )}
+
         {/* Start Date and End Date Fields */}
         <div className="flex justify-between space-x-4">
           {/* Start Date */}
@@ -131,6 +173,8 @@ export default function TaskForm({ onSubmit }) {
               id="addATaskStartDate"
               className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               required
             />
           </div>
@@ -151,6 +195,8 @@ export default function TaskForm({ onSubmit }) {
               id="addATaskEndDate"
               className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
               required
             />
           </div>
@@ -171,11 +217,10 @@ export default function TaskForm({ onSubmit }) {
               type="time"
               name="addATaskStartTime"
               id="addATaskStartTime"
-              min="00:00"
-              max="23:45"
-              step="900"
               className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
               required
             />
           </div>
@@ -192,11 +237,10 @@ export default function TaskForm({ onSubmit }) {
               type="number"
               name="addATaskDuration"
               id="addATaskDuration"
-              defaultValue="15"
-              step="15"
-              min="0"
               className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter Duration"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
               required
             />
           </div>

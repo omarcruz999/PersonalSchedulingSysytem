@@ -11,7 +11,7 @@ class TaskController:
     # Call the create_task method from the model and pass the task_type, title, description, and frequency
     try:
       task = self.model.create_task(task_type, title, description, start_time, duration, start_date, **kwargs)
-      return task.to.dict()
+      return task.to_dict()
     except ValueError as e:
       return {"error": str(e)}
 
@@ -24,7 +24,7 @@ class TaskController:
   def delete_task(self, task_id):
     # Call the delete_task method from the model and pass the task_id
     existing_task = next((task for task in self.model.tasks if task.task_id == task_id), None)
-    if (existing_task):
+    if existing_task:
       self.model.delete_task(task_id)
       return {"message": "Task deleted successfully"}
     else: 

@@ -40,15 +40,15 @@ def create_task():
   # Trys to create a new task with the given data
   try:
     task = controller.create_task(
-      task_type, 
-      title, 
-      description,
-      start_time,
-      duration,
-      start_date, 
-      frequency,
-      end_date,
-      cancelled_task_id,
+      task_type=task_type, 
+      title=title, 
+      description=description,
+      start_time=start_time,
+      duration=duration,
+      start_date=start_date, 
+      frequency=frequency,
+      end_date=end_date,
+      cancelled_task_id=cancelled_task_id,
     )
     # Returns the newly created task as a JSON response
     return jsonify(task), 201

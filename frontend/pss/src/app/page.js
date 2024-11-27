@@ -3,16 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchTasks, deleteTask } from "../api/taskService";
+import { fetchTasks, deleteTask, editTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false); // State for hamburger menu visibility
 
-
-
+  // useEffect is used to fetch tasks from the backend whe nthe component is first rendered
   useEffect(() => {
+    // loadtask function calls the fetchTasks function and sets the tasks state to the fetched tasks
     async function loadTasks() {
       const fetchedTasks = await fetchTasks();
       setTasks(fetchedTasks);
@@ -20,12 +20,21 @@ export default function HomePage() {
     loadTasks();
   }, []);
 
-
-
+  // Function to delete a task with the given taskId
   const handleDelete = async (taskId) => {
+    // Calls the deleteTask function and sets the tasks state to the tasks array without the deleted task
     await deleteTask(taskId);
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
+
+  // Function to edit a task with the given taskId and updates
+  const handleEdit = async (taskId, updates) => {
+    // Calls the editTask function and sets the tasks state to the tasks array with the updated task
+    const updatedTask = await editTask(taskId, updates);
+    setTasks(
+      tasks.map((task) => (task.id === taskId ? { ...task, ...updatedTask} : task))
+    );
+  }
 
 
 
@@ -93,7 +102,7 @@ export default function HomePage() {
 
 
         {/* List Of Tasks */}
-        <TaskList tasks={tasks} onDelete={handleDelete} />
+        <TaskList tasks={tasks} onDelete={handleDelete}  onEdit={handleEdit} />
 
       </div>
 
