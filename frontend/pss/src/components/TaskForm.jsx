@@ -84,7 +84,6 @@ export default function TaskForm({ onSubmit }) {
               required
               className="border text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
             >
-              <option value="">Select type</option>
               <option value="recurring">Recurring Task</option>
               <option value="transient">Transient Task</option>
               <option value="anti">Anti-Task</option>
@@ -219,6 +218,9 @@ export default function TaskForm({ onSubmit }) {
               id="addATaskStartTime"
               className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter A Time"
+              min="00:00"
+              max="23:45"
+              step="900"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
               required
@@ -240,6 +242,9 @@ export default function TaskForm({ onSubmit }) {
               className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white"
               placeholder="Enter Duration"
               value={duration}
+              min="15"
+              step="15"
+
               onChange={(e) => setDuration(e.target.value)}
               required
             />
