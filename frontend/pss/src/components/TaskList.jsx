@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function TaskList({ tasks, onDelete, onEdit }) {
 
    // Function to format date from YYYY-MM-DD to MM-DD-YYYY
@@ -56,16 +58,21 @@ export default function TaskList({ tasks, onDelete, onEdit }) {
 
                     <div>
                       {/* Task Name*/}
-                      <button className="font-medium text-black"
-                        style={{ display: "inline" }}
-                        id="taskName"
-                        onClick={() =>
-                          onEdit(task.id, {
-                            title: "Updated Task Title",
-                            description: "Updated description",
-                          })
-                        }
-                      >{task.title}</button>
+                      <Link href="/edit-task">
+                        <button className="font-medium text-black"
+                          style={{ display: "inline" }}
+                          id="taskName"
+                          // onClick={() =>
+                          //   onEdit(task.id, {
+                          //     title: "Updated Task Title",
+                          //     description: "Updated description",
+                          //   })
+                          // }
+                        >
+                          {task.title}
+                        </button>
+                      </Link>
+
                       {/* Task Times (Start Time + End Time) shows duration */}
                       <p className="text-sm text-gray-500" id="taskTime">At {formatTime(task.start_time)} | Duration: {task.duration} minutes</p>  
                     </div>
