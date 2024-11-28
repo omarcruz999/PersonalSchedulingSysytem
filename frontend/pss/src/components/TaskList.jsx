@@ -1,6 +1,13 @@
 import Link from "next/link";
 
-export default function TaskList({ tasks, onDelete, onEdit }) {
+export default function TaskList(
+  { 
+    tasks, 
+    onDelete, 
+  }
+) 
+
+{
 
    // Function to format date from YYYY-MM-DD to MM-DD-YYYY
    const formatDate = (dateString) => {
@@ -58,7 +65,7 @@ export default function TaskList({ tasks, onDelete, onEdit }) {
 
                     <div>
                       {/* Task Name*/}
-                      <Link href="/edit-task">
+                      <Link href={`/edit-task/${task.id}`}>
                         <button className="font-medium text-black"
                           style={{ display: "inline" }}
                           id="taskName"

@@ -1,15 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function TaskForm({ onSubmit }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [type, setType] = useState("transient");
-  const [frequency, setFrequency] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [duration, setDuration] = useState(0);
-  const [cancelledTaskId, setCancelledTaskId] = useState(""); // For Anti-Task
+export default function TaskForm(
+  { 
+    onSubmit, 
+    initialValues = {},
+  }
+) 
+
+{
+  const [title, setTitle] = useState(initialValues.title || "");
+  const [description, setDescription] = useState(initialValues.description ||"");
+  const [type, setType] = useState(initialValues.type ||"transient");
+  const [frequency, setFrequency] = useState(initialValues.frequency || "");
+  const [startDate, setStartDate] = useState(initialValues.start_date || "");
+  const [endDate, setEndDate] = useState(initialValues.end_date || "");
+  const [startTime, setStartTime] = useState(initialValues.start_time || "");
+  const [duration, setDuration] = useState(initialValues.duration || 0);
+  const [cancelledTaskId, setCancelledTaskId] = useState(initialValues.cancelledTaskId || ""); // For Anti-Task
+
+  // Update form fields when `initialValues` change (for editing)
+  useEffect(() => {
+    // Check if 'initialValues' has a valid ID indicating an edit operation
+    if (initialValues && initialValues.id) {
+      setTitle(initialValues.title || "");
+      setDescription(initialValues.description || "");
+      setType(initialValues.type || "transient");
+      setFrequency(initialValues.frequency || "");
+      setStartDate(initialValues.start_date || "");
+      setEndDate(initialValues.end_date || "");
+      setStartTime(initialValues.start_time || "");
+      setDuration(initialValues.duration || 0);
+      setCancelledTaskId(initialValues.cancelled_task_id || "");
+    }
+  }, [initialValues]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,10 +42,8 @@ export default function TaskForm({ onSubmit }) {
       type,
       start_date: startDate,
       start_time: startTime,
-      duration,
+      duration: Number(duration),
     };
-
-    taskData.duration = Number(duration);
 
     if (type === "recurring") {
       taskData.frequency = frequency;
@@ -33,6 +54,7 @@ export default function TaskForm({ onSubmit }) {
 
     onSubmit(taskData);
 
+    // Reset form fields
     setTitle("");
     setDescription("");
     setType("transient");
