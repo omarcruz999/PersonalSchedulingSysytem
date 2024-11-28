@@ -8,7 +8,18 @@ import TaskList from "../components/TaskList";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
-  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false); // State for hamburger menu visibility
+  // State for hamburger menu visibility
+  const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
+  // State for Read Input field visibility 
+  const [showReadFileInput, setShowReadFileInput] = useState(false);
+
+  // Manages the file name and visibility of the download button 
+  const [fileName, setFileName] = useState("");
+  const [showFileNameInput, setShowFileNameInput] = useState(false);
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
+
+
 
   // useEffect is used to fetch tasks from the backend whe nthe component is first rendered
   useEffect(() => {
@@ -32,7 +43,7 @@ export default function HomePage() {
     // Calls the editTask function and sets the tasks state to the tasks array with the updated task
     const updatedTask = await editTask(taskId, updates);
     setTasks(
-      tasks.map((task) => (task.id === taskId ? { ...task, ...updatedTask} : task))
+      tasks.map((task) => (task.id === taskId ? { ...task, ...updatedTask } : task))
     );
   }
 
@@ -47,6 +58,44 @@ export default function HomePage() {
     setIsFilterDrawerOpen(false);
   };
 
+  // Toggles the state of Read Input field visibility 
+  const toggleReadFileInput = () => {
+    setShowReadFileInput((prev) => !prev);
+  };
+
+  // Handles the File Name Change
+  const handleFileNameChange = (e) => {
+    setFileName(e.target.value);
+  };
+
+  // Handle the download
+  const handleDownload = () => {
+    {/* 
+    // Create a Blob with the file content
+
+    // Create a link to download the file
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${fileName}.json`; // Use the file name entered by the user
+    link.click(); // Trigger download
+  };
+
+
+  // Handle File Inputs 
+  const handleFileInput = (event, action) => {
+    const file = event.target.files[0];
+    if (file) {
+
+      if (action === 'write') {
+        // Process the file for writing
+      } else if (action === 'read') {
+        // Process the file for reading
+      }
+    }
+
+    */}
+  };
+
 
 
   return (
@@ -54,8 +103,8 @@ export default function HomePage() {
     <div className="bg-gray-300 min-h-screen">
       <div className="max-w-4xl mx-auto p-4" style={{ overflowX: "hidden", overflowY: "scroll" }}>
 
-        
-        
+
+
         {/* Home Page Conents */}
         <header className="bg-white shadow rounded-lg mb-6">
           <div className="flex justify-between items-center p-4">
@@ -102,7 +151,7 @@ export default function HomePage() {
 
 
         {/* List Of Tasks */}
-        <TaskList tasks={tasks} onDelete={handleDelete}  onEdit={handleEdit} />
+        <TaskList tasks={tasks} onDelete={handleDelete} onEdit={handleEdit} />
 
       </div>
 
@@ -193,35 +242,89 @@ export default function HomePage() {
                   type="button"
                   id="writeScheduleToFileButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
+                  onClick={() => setShowFileNameInput(prevState => !prevState)} // Toggle visibility of file name input
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Write Schedule To File</p>
                 </button>
+
+                {/* Write to Schedule Button */}
+                {showFileNameInput && (
+                  <div>
+
+                    <label className="block mb-2 text-sm font-medium text-gray-900" htmlFor="file_name_input">
+                      Enter File Name
+                    </label>
+
+                    {/* File Chooser */}
+                    <input
+                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+                      id="file_name_input"
+                      placeholder="Enter File Name"
+                      type="text"
+                      value={fileName}
+                      onChange={handleFileNameChange} // Update file name on change
+                    />
+
+                    {/* Show download button once file name is entered */}
+                    {fileName && (
+                      <button
+                        onClick={handleDownload} // Trigger download when clicked
+                        className="mt-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                      >
+                        Download File
+                      </button>
+                    )}
+                  </div>
+                )}
               </li>
-              <li>
-                <button
-                  type="button"
-                  id="readFromScheduleButton"
-                  className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
-                >
-                  <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Read From Schedule</p>
-                </button>
-              </li>
+
+              {/* Read Schedule From File */}
+              <button
+                type="button"
+                id="readFromFileButton"
+                className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
+                onClick={toggleReadFileInput}
+              >
+                <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Read From File</p>
+              </button>
+
+              {showReadFileInput && (
+                <div>
+
+                  <label className="block mb-2 text-sm font-medium text-gray-900" htmlFor="file_input_read">
+                    Upload File
+                  </label>
+
+                  {/* File Chooser */}
+                  <input
+                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+                    id="file_input_read"
+                    type="file"
+                    onChange={(e) => handleFileInput(e, 'read')}
+                  />
+
+                </div>
+              )}
+
             </ul>
           </div>
         </div>
-      )}
+      )
+      }
 
 
 
       {/* Overlay to close the modal when clicking outside */}
-      {isFilterDrawerOpen && (
-        <div
-          className="fixed inset-0 bg-black opacity-25"
-          onClick={closeFilterDrawer}
-          aria-hidden="true"
-        ></div>
-      )}
-    </div>
-    
+      {
+        isFilterDrawerOpen && (
+          <div
+            className="fixed inset-0 bg-black opacity-25"
+            onClick={closeFilterDrawer}
+            aria-hidden="true"
+          ></div>
+        )
+      }
+    </div >
+
   );
 }
