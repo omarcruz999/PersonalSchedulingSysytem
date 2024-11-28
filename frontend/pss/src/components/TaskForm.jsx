@@ -20,15 +20,18 @@ export default function TaskForm(
 
   // Update form fields when `initialValues` change (for editing)
   useEffect(() => {
-    setTitle(initialValues.title || "");
-    setDescription(initialValues.description || "");
-    setType(initialValues.type || "transient");
-    setFrequency(initialValues.frequency || "");
-    setStartDate(initialValues.start_date || "");
-    setEndDate(initialValues.end_date || "");
-    setStartTime(initialValues.start_time || "");
-    setDuration(initialValues.duration || 0);
-    setCancelledTaskId(initialValues.cancelled_task_id || "");
+    // Check if 'initialValues' has a valid ID indicating an edit operation
+    if (initialValues && initialValues.id) {
+      setTitle(initialValues.title || "");
+      setDescription(initialValues.description || "");
+      setType(initialValues.type || "transient");
+      setFrequency(initialValues.frequency || "");
+      setStartDate(initialValues.start_date || "");
+      setEndDate(initialValues.end_date || "");
+      setStartTime(initialValues.start_time || "");
+      setDuration(initialValues.duration || 0);
+      setCancelledTaskId(initialValues.cancelled_task_id || "");
+    }
   }, [initialValues]);
 
   const handleSubmit = (e) => {
