@@ -24,3 +24,22 @@ export async function deleteTask(taskId) {
   if (!response.ok) throw new Error("Failed to delete task");
   return response.json();
 }
+
+// Edit a task
+export async function editTask(taskId, updates) {
+  const response = await fetch(`${BASE_URL}/tasks/${taskId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+  
+  if (!response.ok) throw new Error(`Failed to update task with ID ${taskId}`);
+  return response.json();
+}
+
+// Fetch a task by ID
+export async function fetchTaskById(taskId) {
+  const response = await fetch(`${BASE_URL}/tasks/${taskId}`);
+  if (!response.ok) throw new Error(`Failed to fetch task with ID ${taskId}`);
+  return response.json();
+}
