@@ -8,22 +8,33 @@ import TaskList from "../components/TaskList";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
+
   // State for hamburger menu visibility
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
   // State for Read Input field visibility 
   const [showReadFileInput, setShowReadFileInput] = useState(false);
 
+  // Visibility of File Name input
+  const [showFileNameInput, setShowFileNameInput] = useState(false);
+
+  // Visibility of Time Period input
+  const [showTimePeriodInput, setShowTimePeriodInput] = useState(false);
+
+  // Visibility of Start Date input
+  const [showStartDateInput, setShowStartDateInput] = useState(false);
+
+  // Start date input
+  const [startDate, setStartDate] = useState("");
+
+  // Time period (day, week, or month)
+  const [timePeriod, setTimePeriod] = useState("day");
+
   // Manages the file name and visibility of the download button 
   const [fileName, setFileName] = useState("");
-  const [showFileNameInput, setShowFileNameInput] = useState(false);
-  const [showDownloadButton, setShowDownloadButton] = useState(false);
 
-
-
-  // useEffect is used to fetch tasks from the backend whe nthe component is first rendered
+  // Fetch tasks from API
   useEffect(() => {
-    // loadtask function calls the fetchTasks function and sets the tasks state to the fetched tasks
     async function loadTasks() {
       const fetchedTasks = await fetchTasks();
       setTasks(fetchedTasks);
@@ -31,9 +42,8 @@ export default function HomePage() {
     loadTasks();
   }, []);
 
-  // Function to delete a task with the given taskId
+  // Function to delete a task
   const handleDelete = async (taskId) => {
-    // Calls the deleteTask function and sets the tasks state to the tasks array without the deleted task
     await deleteTask(taskId);
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
@@ -52,74 +62,60 @@ export default function HomePage() {
     setShowReadFileInput((prev) => !prev);
   };
 
-  // Handles the File Name Change
-  const handleFileNameChange = (e) => {
-    setFileName(e.target.value);
+  // Toggle the visibility of the time period and start date inputs
+  const toggleWriteToFileInputs = () => {
+    setShowFileNameInput((prevState) => !prevState);
+    setShowTimePeriodInput((prevState) => !prevState); // Toggle time period visibility
+    setShowStartDateInput((prevState) => !prevState);   // Toggle start date visibility
   };
 
-  // Handle Write To File + the download
-  const handleDownload = () => {
-    // Handle write to file 
-    // Create a Blob with the file content
-
-    {/* 
-
-    // Create a link to download the file
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `${fileName}.json`; // Use the file name entered by the user
-    link.click(); // Trigger download
-
-    */}
-
-    console.log("downloading file");
-    
+  // Handle start date change
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
   };
 
+  // Handle time period change (Day, Week, Month)
+  const handleTimePeriodChange = (e) => {
+    setTimePeriod(e.target.value);
+  };
 
-  // Handle File Inputs 
+  // Handle Reading from File
   const handleFileInput = (event, action) => {
     const file = event.target.files[0];
-    console.log("reading file");
+    console.log(file);
   };
 
 
-
-
-
+  // Handle Write To File + the download
+  const generateSchedule = () => {
+    // Placeholder for generating the schedule file
+    console.log(fileName, startDate, timePeriod);
+  };
 
   return (
-    // Home Page
     <div className="bg-gray-300 min-h-screen">
       <div className="max-w-4xl mx-auto p-4" style={{ overflowX: "hidden", overflowY: "scroll" }}>
-
-
-
-        {/* Home Page Conents */}
+        {/* Home Page Content */}
         <header className="bg-white shadow rounded-lg mb-6">
           <div className="flex justify-between items-center p-4">
-
             {/* Holds appbar contents */}
             <div className="flex items-center space-x-4">
               {/* Hamburger Menu */}
-
               <button
                 onClick={openFilterDrawer}
                 className="p-2 hover:bg-gray-100 rounded"
                 aria-controls="filterDrawer"
                 aria-expanded={isFilterDrawerOpen}
-                aria-label="Open filter drawer">
-
+                aria-label="Open filter drawer"
+              >
                 {/* Hamburger Menu Image */}
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-
               </button>
 
               {/* Task View Title */}
               <h1 className="text-xl font-semibold">Task View</h1>
-
             </div>
 
             {/* User Avatar */}
@@ -128,28 +124,20 @@ export default function HomePage() {
               <img
                 id="avatarButton"
                 type="button"
-                data-dropdown-toggle="userDropdown"
-                data-dropdown-placement="bottom-start"
                 className="w-10 h-10 rounded-full cursor-pointer"
                 src="/static/images/JohnPork.jpg"
-                alt="User dropdown" />
-
+                alt="User dropdown"
+              />
             </div>
           </div>
         </header>
 
-
-
-        {/* List Of Tasks */}
+        {/* List of Tasks */}
         <TaskList tasks={tasks} onDelete={handleDelete} />
-
       </div>
-
-
 
       {/* Add A Task Button */}
       <div className="fixed bottom-6 right-12 rounded-full bg-gray-500 hover:bg-gray-800 hover:opacity-80 active:opacity-50">
-        {/* Takes User To Create Task Page */}
         <Link href="/create-task">
           <button className="p-2">
             <Image
@@ -161,8 +149,6 @@ export default function HomePage() {
           </button>
         </Link>
       </div>
-
-
 
       {/* Hamburger Menu Modal */}
       {isFilterDrawerOpen && (
@@ -232,15 +218,14 @@ export default function HomePage() {
                   type="button"
                   id="writeScheduleToFileButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
-                  onClick={() => setShowFileNameInput(prevState => !prevState)} // Toggle visibility of file name input
+                  onClick={toggleWriteToFileInputs}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Write Schedule To File</p>
                 </button>
 
-                {/* Write to Schedule Button */}
+                {/* Write to File Button */}
                 {showFileNameInput && (
                   <div>
-
                     <label className="block mb-2 text-sm font-medium text-gray-900" htmlFor="file_name_input">
                       Enter File Name
                     </label>
@@ -252,13 +237,46 @@ export default function HomePage() {
                       placeholder="Enter File Name"
                       type="text"
                       value={fileName}
-                      onChange={handleFileNameChange} // Update file name on change
+                      onChange={(e) => setFileName(e.target.value)}
                     />
+
+                    {showTimePeriodInput && (
+                      <div>
+                        <label htmlFor="time_period" className="block mb-2 text-sm font-medium text-gray-900">
+                          Select Time Period
+                        </label>
+                        <select
+                          id="time_period"
+                          value={timePeriod}
+                          onChange={handleTimePeriodChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
+                        >
+                          <option value="day">Day</option>
+                          <option value="week">Week</option>
+                          <option value="month">Month</option>
+                        </select>
+                      </div>
+                    )}
+
+                    {showStartDateInput && (
+                      <div>
+                        <label htmlFor="start_date" className="block mb-2 text-sm font-medium text-gray-900">
+                          Start Date
+                        </label>
+                        <input
+                          type="date"
+                          id="start_date"
+                          value={startDate}
+                          onChange={handleStartDateChange}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
+                        />
+                      </div>
+                    )}
 
                     {/* Show download button once file name is entered */}
                     {fileName && (
                       <button
-                        onClick={handleDownload} // Trigger download when clicked
+                        onClick={generateSchedule}
                         className="mt-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
                       >
                         Download File
@@ -280,11 +298,9 @@ export default function HomePage() {
 
               {showReadFileInput && (
                 <div>
-
                   <label className="block mb-2 text-sm font-medium text-gray-900" htmlFor="file_input_read">
                     Upload File
                   </label>
-
                   {/* File Chooser */}
                   <input
                     className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
@@ -292,29 +308,21 @@ export default function HomePage() {
                     type="file"
                     onChange={(e) => handleFileInput(e)}
                   />
-
                 </div>
               )}
-
             </ul>
           </div>
         </div>
-      )
-      }
-
-
+      )}
 
       {/* Overlay to close the modal when clicking outside */}
-      {
-        isFilterDrawerOpen && (
-          <div
-            className="fixed inset-0 bg-black opacity-25"
-            onClick={closeFilterDrawer}
-            aria-hidden="true"
-          ></div>
-        )
-      }
-    </div >
-
+      {isFilterDrawerOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-25"
+          onClick={closeFilterDrawer}
+          aria-hidden="true"
+        ></div>
+      )}
+    </div>
   );
 }
