@@ -57,33 +57,34 @@ export default function HomePage() {
     setFileName(e.target.value);
   };
 
-  // Handle the download
+  // Handle Write To File + the download
   const handleDownload = () => {
-    {/* 
+    // Handle write to file 
     // Create a Blob with the file content
+
+    {/* 
 
     // Create a link to download the file
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `${fileName}.json`; // Use the file name entered by the user
     link.click(); // Trigger download
+
+    */}
+
+    console.log("downloading file");
+    
   };
 
 
   // Handle File Inputs 
   const handleFileInput = (event, action) => {
     const file = event.target.files[0];
-    if (file) {
-
-      if (action === 'write') {
-        // Process the file for writing
-      } else if (action === 'read') {
-        // Process the file for reading
-      }
-    }
-
-    */}
+    console.log("reading file");
   };
+
+
+
 
 
 
@@ -289,7 +290,7 @@ export default function HomePage() {
                     className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
                     id="file_input_read"
                     type="file"
-                    onChange={(e) => handleFileInput(e, 'read')}
+                    onChange={(e) => handleFileInput(e)}
                   />
 
                 </div>
