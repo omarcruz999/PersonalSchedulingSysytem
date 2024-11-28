@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchTasks, deleteTask, editTask } from "../api/taskService";
+import { fetchTasks, deleteTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
 
 export default function HomePage() {
@@ -27,17 +27,6 @@ export default function HomePage() {
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
-  // Function to edit a task with the given taskId and updates
-  const handleEdit = async (taskId, updates) => {
-    // Calls the editTask function and sets the tasks state to the tasks array with the updated task
-    const updatedTask = await editTask(taskId, updates);
-    setTasks(
-      tasks.map((task) => (task.id === taskId ? { ...task, ...updatedTask} : task))
-    );
-  }
-
-
-
   // Toggles the state of the hamburger menu's visibility
   const openFilterDrawer = () => {
     setIsFilterDrawerOpen(true);
@@ -46,7 +35,6 @@ export default function HomePage() {
   const closeFilterDrawer = () => {
     setIsFilterDrawerOpen(false);
   };
-
 
 
   return (
@@ -102,7 +90,7 @@ export default function HomePage() {
 
 
         {/* List Of Tasks */}
-        <TaskList tasks={tasks} onDelete={handleDelete}  onEdit={handleEdit} />
+        <TaskList tasks={tasks} onDelete={handleDelete} />
 
       </div>
 
