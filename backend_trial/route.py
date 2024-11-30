@@ -1,12 +1,14 @@
 from app import app,db
 from flask import request, jsonify
-from Task import task
+from task import Task
+
+
 
 #get all tasks
 @app.route("/api/tasks", methods=["GET"]) # GET means it is going to access all the data in the data base and retunr
 def get_tasks():
     #return all tasks in database "SELECT * FROM tasks " THIS is basically whats running in python 
-    tasks = tasks.query.all()
+    tasks = Task.query.all()
     #convert to json to return to client 
     result = [tasks.to_json() for tasks in tasks]
     # basciallty putting it in json format  [{...}, {...}]
@@ -19,17 +21,21 @@ def create_tasks():
     data = request.json
 
     # Validations
-    required_fields = ["name","role","description","gender"]
+    required_fields = ["name","type","description","start_time", "start_date", "duration"]
     for field in required_fields:
+      #if a field is empty it will display an error
       if field not in data or not data.get(field):
         return jsonify({"error":f'Missing required field: {field}'}), 400
 
     name = data.get("name")
-    role = data.get("role")
+    type = data.get("role")
     description = data.get("description")
-    gender = data.get("gender")
+    start_time = data.get("start_time")
+    start_date = data.get("start_date")
+    duration = data.get("duartion")
 
     # Fetch avatar image based on gender
+    #Leave this for reference
     if gender == "male":
       img_url = f"https://avatar.iran.liara.run/public/boy?username={name}"
     elif gender == "female":
@@ -37,7 +43,8 @@ def create_tasks():
     else:
       img_url = None
 
-    new_tasks = task(name=name, role=role, description=description, gender= gender, img_url=img_url)
+#creating the task with all intial inputs 
+    new_tasks = Task(name=name, type=type, description=description, start_time= start_time, start_date=start_date, duration = duration)
 #like git add.
     db.session.add(new_tasks) 
     #like git commit
@@ -52,10 +59,12 @@ def create_tasks():
     return jsonify({"error":str(e)}), 500
   
 #Delete tasks
-@app.route("/api/tasks/<int:id>",methods=["DELETE"])
-def delete_tasks(id):
+# might have to delete task by name 
+@app.route("/api/tasks/name",methods=["DELETE"])
+def delete_tasks(name):
   try:
-    tasks = tasks.query.get(id)
+    #look for name 
+    tasks = Task.query.get(name)
     if tasks is None:
       return jsonify({"error":"tasks is not found"}),404
     
@@ -65,3 +74,24 @@ def delete_tasks(id):
   except Exception as e:
     db.session.rollback()
     return jsonify({"error":str(e)}), 500
+  
+# Update a task
+@app.route("/api/friends/name",methods=["PATCH"])
+def update_friend(name):
+  try:
+    task = Task.query.get(name)
+    if task is None:
+      return jsonify({"error":"Friend not found"}), 404
+    
+    data = request.json
+
+    task.name = data.get("name",task.name)
+    task.role = data.get("role",task.role)
+    task.description = data.get("description",task.description)
+    task.gender = data.get("gender",task.gender)
+
+    db.session.commit()
+    return jsonify(task.to_json()),200
+  except Exception as e:
+    db.session.rollback()
+    return jsonify({"error":str(e)}),500
