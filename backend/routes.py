@@ -2,25 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from Controller import TaskController
 from flask_sqlalchemy import SQLAlchemy
-
-
-# Create a Flask app
-app = Flask(__name__)
-# Enable CORS
-CORS(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///friend.db"
-
-#performance reason so we dont consume resources 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-# Instantiate the TaskController
-controller = TaskController()
-
-with app.app_context():
-    db.create_all()
+from Task import task
 
 # Defines an ednpoint at /tasks for any GET requests
 @app.route('/tasks', methods=['GET'])
@@ -92,8 +74,3 @@ def get_task_by_id(task_id):
   if ("error" in task):
     return jsonify(task), 404
   return jsonify(task), 200
-
-
-# Runs the Flask app in debug mode
-if __name__ == '__main__':
-  app.run(debug=True)
