@@ -17,6 +17,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 import routes
+
+
 # note when we running the app make sure to set it to the main.py file or app.py since that were its going to start
 #set flask_env - dev is jsut for debugging
 with app.app_context():
@@ -24,4 +26,4 @@ with app.app_context():
 
 #check if the script is being run directyl so when imported it wont run this line only directly
 if __name__ == "__main__":
-    app.run(debug = True,host='0.0.0.0')
+    app.run(debug = True)
