@@ -1,4 +1,5 @@
 import Link from "next/link";
+import dayjs from "dayjs";
 
 export default function TaskList({ 
     tasks, 
@@ -9,11 +10,26 @@ export default function TaskList({
 
 {
   const dates = []
+  const months = []
 
    // Function to format date from YYYY-MM-DD to MM-DD-YYYY
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
+  };
+
+  const formatMonth = (dateString) => {
+    const [year, month, day] = dateString.split('-');
+
+    if (["01", "03", "05", "07", "08", "10", "12"].includes(month)) 
+      return `${month}/1/${year} - ${month}/31/${year}`;
+    else if (["04", "06", "09", "11"].includes(month)) 
+      return `${month}/1/${year} - ${month}/30/${year}`;
+    else if (month == "02" && dayjs(`${year}-01-01`).isLeapYear()) 
+      return `${month}/1/${year} - ${month}/29/${year}`;
+    else 
+      return `${month}/1/${year} - ${month}/28/${year}`;
+    
   };
 
   // Function to determine if the date is today or tomorrow
@@ -54,18 +70,34 @@ export default function TaskList({
   const displayDateHeader = (date) => {
     return(
       <>
-        <div className="p-4 border-b space-y-4 rounded-lg bg-slate-500">
+        <div className="p-4 mt-4 border-b space-y-4 rounded-lg bg-slate-500 ">
           <p className="text-sm text-white text-left" id="taskDates">{formatDate(date)}</p>
         </div>
       </>
     )
   }
 
+  const displayMonthHeader = (date) => {
+    return(
+      <>
+        <div className="p-4 mt-4 border-b space-y-4 rounded-lg bg-slate-500 ">
+          <p className="text-sm text-white text-left" id="taskDates">{formatMonth(date)}</p>
+        </div>
+      </>
+    )
+  }
+
   const handleAddDate = (date) => {
-    if (mode == "daily") {
+    if (mode == "daily") 
       if (!dates.includes(date)) {
         dates.push(date) 
         return displayDateHeader(date)     
+      }
+    if (mode == "monthly") {
+      const [year, month, day] = date.split('-');
+      if (!months.some(([m, y]) => m === month && y === year)) {
+        months.push([month, year]) 
+        return displayMonthHeader(date)
       }
     }
   }
