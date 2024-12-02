@@ -8,6 +8,10 @@ import TaskList from "../components/TaskList";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
+
+  // State for task display
+  const [taskState, setTaskState] = useState("")
+
   // State for hamburger menu visibility
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
@@ -18,8 +22,6 @@ export default function HomePage() {
   const [fileName, setFileName] = useState("");
   const [showFileNameInput, setShowFileNameInput] = useState(false);
   const [showDownloadButton, setShowDownloadButton] = useState(false);
-
-
 
   // useEffect is used to fetch tasks from the backend whe nthe component is first rendered
   useEffect(() => {
@@ -83,17 +85,14 @@ export default function HomePage() {
     console.log("reading file");
   };
 
-
-
-
-
+  // const handleTaskState = (mode) => {
+  //   setTaskState("daily")
+  // }
 
   return (
     // Home Page
     <div className="bg-gray-300 min-h-screen">
       <div className="max-w-4xl mx-auto p-4" style={{ overflowX: "hidden", overflowY: "scroll" }}>
-
-
 
         {/* Home Page Conents */}
         <header className="bg-white shadow rounded-lg mb-6">
@@ -138,14 +137,14 @@ export default function HomePage() {
           </div>
         </header>
 
-
-
         {/* List Of Tasks */}
-        <TaskList tasks={tasks} onDelete={handleDelete} />
+        <TaskList 
+          tasks={tasks} 
+          mode={taskState}
+          onDelete={handleDelete} 
+        />
 
       </div>
-
-
 
       {/* Add A Task Button */}
       <div className="fixed bottom-6 right-12 rounded-full bg-gray-500 hover:bg-gray-800 hover:opacity-80 active:opacity-50">
@@ -161,8 +160,6 @@ export default function HomePage() {
           </button>
         </Link>
       </div>
-
-
 
       {/* Hamburger Menu Modal */}
       {isFilterDrawerOpen && (
@@ -196,6 +193,7 @@ export default function HomePage() {
                   type="button"
                   id="filterViewDailyButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
+                  onClick={() => setTaskState("daily")}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Daily</p>
                 </button>
@@ -205,6 +203,7 @@ export default function HomePage() {
                   type="button"
                   id="filterViewWeeklyButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
+                  onClick={() => setTaskState("weekly")}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Weekly</p>
                 </button>
@@ -214,6 +213,7 @@ export default function HomePage() {
                   type="button"
                   id="filterViewMonthlyButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
+                  onClick={() => setTaskState("monthly")}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Monthly</p>
                 </button>

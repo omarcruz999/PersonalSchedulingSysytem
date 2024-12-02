@@ -1,16 +1,17 @@
 import Link from "next/link";
 
-export default function TaskList(
-  { 
+export default function TaskList({ 
     tasks, 
+    mode,
     onDelete, 
   }
 ) 
 
 {
+  const dates = []
 
    // Function to format date from YYYY-MM-DD to MM-DD-YYYY
-   const formatDate = (dateString) => {
+  const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
   };
@@ -50,19 +51,36 @@ export default function TaskList(
     }
   }
 
+  const displayDateHeader = (date) => {
+    return(
+      <>
+        <div className="p-4 border-b space-y-4 rounded-lg bg-slate-500">
+          <p className="text-sm text-white text-left" id="taskDates">{formatDate(date)}</p>
+        </div>
+      </>
+    )
+  }
+
+  const handleAddDate = (date) => {
+    if (mode == "daily") {
+      if (!dates.includes(date)) {
+        dates.push(date) 
+        return displayDateHeader(date)     
+      }
+    }
+  }
 
   return (
-    <div>
+    <div>              
       {tasks.length > 0 ? (
-        <ul>
+        <ul> 
           {tasks.map((task) => (
             <li key={task.id}>
-
-              {/* Task Card */}
+              {/* Task Card */}              
+              {handleAddDate(task.start_date)}
               <main className="bg-white shadow rounded-lg">
                 <div className="p-4 border-b space-y-4 rounded-lg">
                   <div className="flex justify-between">
-
                     <div>
                       {/* Task Name*/}
                       <Link href={`/edit-task/${task.id}`}>
