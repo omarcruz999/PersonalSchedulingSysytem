@@ -76,8 +76,7 @@ class TaskModel:
     return None
   
   def add_date(self, date):
-    if date not in self.dates:
-      self.dates.append(date)
+    self.dates.append(date)
     return date
 
   def get_dates(self):
