@@ -27,3 +27,28 @@ class Task:
       "duration": self.duration,
       "start_date" : self.start_date
     }
+  
+  """ Getters for attributes """
+  def set_task_id(self, task_id):
+    self.task_id = task_id
+
+  def set_title(self, title):
+      self.title = title
+
+  def set_description(self, description):
+      self.description = description
+
+  def set_task_type(self, task_type):
+      self.task_type = task_type
+
+  def set_start_time(self, start_time):
+      self.start_time = start_time
+
+  def set_duration(self, duration):
+      self.duration = duration
+
+  def set_start_date(self, start_date):
+      self.start_date = start_date
+
+  
+

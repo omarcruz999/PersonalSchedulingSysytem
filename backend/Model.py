@@ -52,18 +52,18 @@ class TaskModel:
     for task in self.tasks: 
       if task.task_id == task_id:
         # Updates the task attributes with the new information
-        task.title = updates.get("title", task.title)
-        task.description = updates.get("description", task.description)
-        task.start_time = updates.get("start_time", task.start_time)
-        task.duration = updates.get("duration", task.duration)
-        task.start_date = updates.get("start_date", task.start_date)
+        task.set_title(updates.get("title", task.title))
+        task.set_description(updates.get("description", task.description))
+        task.set_start_time(updates.get("start_time", task.start_time))
+        task.set_duration(updates.get("duration", task.duration))
+        task.set_start_date(updates.get("start_date", task.start_date))
             
         # Check for specific updates for subclasses
         if isinstance(task, RecurringTask):
-          task.frequency = updates.get("frequency", task.frequency)
-          task.end_date = updates.get("end_date", task.end_date)
+          task.set_frequency(updates.get("frequency", task.frequency))
+          task.set_end_date(updates.get("end_date", task.end_date))
         elif isinstance(task, AntiTask):
-          task.cancelled_task_id = updates.get("cancelled_task_id", task.cancelled_task_id)
+          task.set_cancelled_task_id(updates.get("cancelled_task_id", task.cancelled_task_id))
 
         # Returns the updated task
         return task
