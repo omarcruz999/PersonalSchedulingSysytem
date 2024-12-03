@@ -11,12 +11,25 @@ export default function TaskList({
 {
   const dates = []
   const months = []
+  const startOfWeeks = []
+
+  const isLeapYear = require("dayjs/plugin/isLeapYear")
+
+  dayjs.extend(isLeapYear)
 
    // Function to format date from YYYY-MM-DD to MM-DD-YYYY
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
   };
+
+  const formatWeek = (dateString) => {
+    const [year, month, day] = dateString.split('-'); 
+    const date = dayjs(`${year}-${month}-${day}`);
+    const monday = date.startOf('week');
+    const sunday = date.endOf('week');
+    return `Monday: ${monday.format('MM/DD/YYYY')} - Sunday: ${sunday.format('MM/DD/YYYY')}`;
+  }
 
   const formatMonth = (dateString) => {
     const [year, month, day] = dateString.split('-');
@@ -29,7 +42,6 @@ export default function TaskList({
       return `${month}/1/${year} - ${month}/29/${year}`;
     else 
       return `${month}/1/${year} - ${month}/28/${year}`;
-    
   };
 
   // Function to determine if the date is today or tomorrow
@@ -71,17 +83,9 @@ export default function TaskList({
     return(
       <>
         <div className="p-4 mt-4 border-b space-y-4 rounded-lg bg-slate-500 ">
-          <p className="text-sm text-white text-left" id="taskDates">{formatDate(date)}</p>
-        </div>
-      </>
-    )
-  }
-
-  const displayMonthHeader = (date) => {
-    return(
-      <>
-        <div className="p-4 mt-4 border-b space-y-4 rounded-lg bg-slate-500 ">
-          <p className="text-sm text-white text-left" id="taskDates">{formatMonth(date)}</p>
+          {mode == "daily" && <p className="text-sm text-white text-left" id="taskDates">{formatDate(date)}</p>}
+          {mode == "weekly" && <p className="text-sm text-white text-left" id="taskDates">{formatWeek(date)}</p>}
+          {mode == "monthly" && <p className="text-sm text-white text-left" id="taskDates">{formatMonth(date)}</p>}
         </div>
       </>
     )
@@ -93,11 +97,22 @@ export default function TaskList({
         dates.push(date) 
         return displayDateHeader(date)     
       }
-    if (mode == "monthly") {
+    if (mode == "weekly") {
+      const [year, month, day] = date.split('-'); 
+      const givenDate = dayjs(`${year}-${month}-${day}`);
+      const monday = givenDate.startOf('week').add(1, 'day');
+      const startOfWeek = monday.format('MM/DD/YYYY')
+
+      if (!startOfWeeks.includes(startOfWeek)) {
+        startOfWeeks.push(startOfWeek) 
+        return displayDateHeader(date)
+      }
+    }
+    else if (mode == "monthly") {
       const [year, month, day] = date.split('-');
       if (!months.some(([m, y]) => m === month && y === year)) {
         months.push([month, year]) 
-        return displayMonthHeader(date)
+        return displayDateHeader(date)
       }
     }
   }
