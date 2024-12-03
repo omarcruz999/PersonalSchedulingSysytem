@@ -24,8 +24,7 @@ export default function TaskList({
   };
 
   const formatWeek = (dateString) => {
-    const [year, month, day] = dateString.split('-'); 
-    const date = dayjs(`${year}-${month}-${day}`);
+    const date = dayjs(dateString);
     let monday;
     if (date.day() == 0) 
       monday = date.startOf('week').subtract(6, 'day');
@@ -99,7 +98,7 @@ export default function TaskList({
   const handleAddDate = (date) => {
     if (mode == "daily") 
       if (!dates.includes(date)) {
-        dates.push(date) 
+        dates.push(date)
         return displayDateHeader(date)     
       }
     if (mode == "weekly") {

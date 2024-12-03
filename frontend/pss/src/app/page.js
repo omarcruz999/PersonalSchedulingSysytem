@@ -3,14 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchTasks, deleteTask } from "../api/taskService";
+import { fetchTasks, deleteTask, fetchDates } from "../api/taskService";
 import TaskList from "../components/TaskList";
+import dayjs from "dayjs";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
+  const [dates, setDates] = useState([]);
 
   // State for task display
-  const [taskState, setTaskState] = useState("")
+  const [taskState, setTaskState] = useState("");
 
   // State for hamburger menu visibility
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -39,11 +41,24 @@ export default function HomePage() {
   // Fetch tasks from API
   useEffect(() => {
     async function loadTasks() {
+      const fetchedDates = await fetchDates()
       const fetchedTasks = await fetchTasks();
+      setDates(fetchedDates)
       setTasks(fetchedTasks);
     }
     loadTasks();
   }, []);
+
+  const sortTasks = () => {
+    const taskDates = dates
+      .map((date, index) => ({ date, index}))
+      .sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1) // Sort by date
+      .map(item => item.index); // Get the indices after sorting
+
+    const sortedTasks = taskDates.map(index => tasks[index]);
+    return sortedTasks
+  }
+
 
   // Function to delete a task
   const handleDelete = async (taskId) => {
@@ -137,7 +152,7 @@ export default function HomePage() {
 
         {/* List Of Tasks */}
         <TaskList 
-          tasks={tasks} 
+          tasks={sortTasks()} 
           mode={taskState}
           onDelete={handleDelete} 
         />

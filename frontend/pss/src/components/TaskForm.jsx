@@ -52,7 +52,7 @@ export default function TaskForm(
       taskData.cancelled_task_id = cancelledTaskId;
     }
 
-    onSubmit(taskData);
+    onSubmit(taskData, taskData.start_date, taskData.start_time);
 
     // Reset form fields
     setTitle("");

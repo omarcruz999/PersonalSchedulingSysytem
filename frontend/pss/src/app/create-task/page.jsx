@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import TaskForm from "../../components/TaskForm";
-import { createTask } from "../../api/taskService";
+import { addDate, createTask } from "../../api/taskService";
 
 export default function CreateTaskPage() {
   const router = useRouter();
 
-  const handleCreateTask = async (taskData) => {
+  const handleCreateTask = async (taskData, date, time) => { 
+    const datetime = `${date}T${time}:00`
+    await addDate(datetime)
     await createTask(taskData);
+   
     router.push("/"); // Redirect to homepage after task creation
   };
 

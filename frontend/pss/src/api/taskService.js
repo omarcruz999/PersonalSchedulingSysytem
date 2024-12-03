@@ -43,3 +43,21 @@ export async function fetchTaskById(taskId) {
   if (!response.ok) throw new Error(`Failed to fetch task with ID ${taskId}`);
   return response.json();
 }
+
+
+export async function addDate(date) {
+  const response = await fetch(`${BASE_URL}/dates`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(date),
+  });
+  if (!response.ok) throw new Error("Failed to add date");
+  return response.json();
+}
+
+export async function fetchDates() {
+  const response = await fetch(`${BASE_URL}/dates`);
+  if (!response.ok) throw new Error(`Failed to fetch dates with ID`);
+  return response.json();
+}
+
