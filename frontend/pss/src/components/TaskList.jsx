@@ -26,9 +26,14 @@ export default function TaskList({
   const formatWeek = (dateString) => {
     const [year, month, day] = dateString.split('-'); 
     const date = dayjs(`${year}-${month}-${day}`);
-    const monday = date.startOf('week');
-    const sunday = date.endOf('week');
-    return `Monday: ${monday.format('MM/DD/YYYY')} - Sunday: ${sunday.format('MM/DD/YYYY')}`;
+    let monday;
+    if (date.day() == 0) 
+      monday = date.startOf('week').subtract(6, 'day');
+    else 
+      monday = date.startOf('week').add(1, 'day')
+         
+    const sunday = monday.endOf('week').add(1, 'day');
+    return [monday.format('MM/DD/YYYY'), sunday.format('MM/DD/YYYY')]
   }
 
   const formatMonth = (dateString) => {
@@ -84,7 +89,7 @@ export default function TaskList({
       <>
         <div className="p-4 mt-4 border-b space-y-4 rounded-lg bg-slate-500 ">
           {mode == "daily" && <p className="text-sm text-white text-left" id="taskDates">{formatDate(date)}</p>}
-          {mode == "weekly" && <p className="text-sm text-white text-left" id="taskDates">{formatWeek(date)}</p>}
+          {mode == "weekly" && <p className="text-sm text-white text-left" id="taskDates">{date}</p>}
           {mode == "monthly" && <p className="text-sm text-white text-left" id="taskDates">{formatMonth(date)}</p>}
         </div>
       </>
@@ -98,14 +103,10 @@ export default function TaskList({
         return displayDateHeader(date)     
       }
     if (mode == "weekly") {
-      const [year, month, day] = date.split('-'); 
-      const givenDate = dayjs(`${year}-${month}-${day}`);
-      const monday = givenDate.startOf('week').add(1, 'day');
-      const startOfWeek = monday.format('MM/DD/YYYY')
-
-      if (!startOfWeeks.includes(startOfWeek)) {
-        startOfWeeks.push(startOfWeek) 
-        return displayDateHeader(date)
+      const [monday, sunday] = formatWeek(date)
+      if (!startOfWeeks.includes(monday)) {
+        startOfWeeks.push(monday) 
+        return displayDateHeader(`Monday: ${monday}, Sunday: ${sunday}`)
       }
     }
     else if (mode == "monthly") {
