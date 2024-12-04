@@ -50,7 +50,7 @@ class TaskModel:
 
     # Finds the task with the specified ID
     for task in self.tasks: 
-      if task.task_id == task_id:
+      if task.get_task_id() == task_id:
         # Updates the task attributes with the new information
         task.set_title(updates.get("title", task.title))
         task.set_description(updates.get("description", task.description))
