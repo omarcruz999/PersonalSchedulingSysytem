@@ -1,18 +1,51 @@
 import Link from "next/link";
+import dayjs from "dayjs";
 
-export default function TaskList(
-  { 
+export default function TaskList({ 
     tasks, 
+    mode,
     onDelete, 
   }
 ) 
 
 {
+  const dates = []
+  const months = []
+  const startOfWeeks = []
+
+  const isLeapYear = require("dayjs/plugin/isLeapYear")
+
+  dayjs.extend(isLeapYear)
 
    // Function to format date from YYYY-MM-DD to MM-DD-YYYY
-   const formatDate = (dateString) => {
+  const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
+  };
+
+  const formatWeek = (dateString) => {
+    const date = dayjs(dateString);
+    let monday;
+    if (date.day() == 0) 
+      monday = date.startOf('week').subtract(6, 'day');
+    else 
+      monday = date.startOf('week').add(1, 'day')
+         
+    const sunday = monday.endOf('week').add(1, 'day');
+    return [monday.format('MM/DD/YYYY'), sunday.format('MM/DD/YYYY')]
+  }
+
+  const formatMonth = (dateString) => {
+    const [year, month, day] = dateString.split('-');
+
+    if (["01", "03", "05", "07", "08", "10", "12"].includes(month)) 
+      return `${month}/1/${year} - ${month}/31/${year}`;
+    else if (["04", "06", "09", "11"].includes(month)) 
+      return `${month}/1/${year} - ${month}/30/${year}`;
+    else if (month == "02" && dayjs(`${year}-01-01`).isLeapYear()) 
+      return `${month}/1/${year} - ${month}/29/${year}`;
+    else 
+      return `${month}/1/${year} - ${month}/28/${year}`;
   };
 
   // Function to determine if the date is today or tomorrow
@@ -50,19 +83,51 @@ export default function TaskList(
     }
   }
 
+  const displayDateHeader = (date) => {
+    return(
+      <>
+        <div className="p-4 mt-4 border-b space-y-4 rounded-lg bg-slate-500 ">
+          {mode == "daily" && <p className="text-sm text-white text-left" id="taskDates">{formatDate(date)}</p>}
+          {mode == "weekly" && <p className="text-sm text-white text-left" id="taskDates">{date}</p>}
+          {mode == "monthly" && <p className="text-sm text-white text-left" id="taskDates">{formatMonth(date)}</p>}
+        </div>
+      </>
+    )
+  }
+
+  const handleAddDate = (date) => {
+    if (mode == "daily") 
+      if (!dates.includes(date)) {
+        dates.push(date)
+        return displayDateHeader(date)     
+      }
+    if (mode == "weekly") {
+      const [monday, sunday] = formatWeek(date)
+      if (!startOfWeeks.includes(monday)) {
+        startOfWeeks.push(monday) 
+        return displayDateHeader(`Monday: ${monday}, Sunday: ${sunday}`)
+      }
+    }
+    else if (mode == "monthly") {
+      const [year, month, day] = date.split('-');
+      if (!months.some(([m, y]) => m === month && y === year)) {
+        months.push([month, year]) 
+        return displayDateHeader(date)
+      }
+    }
+  }
 
   return (
-    <div>
+    <div>              
       {tasks.length > 0 ? (
-        <ul>
+        <ul> 
           {tasks.map((task) => (
             <li key={task.id}>
-
-              {/* Task Card */}
+              {/* Task Card */}              
+              {handleAddDate(task.start_date)}
               <main className="bg-white shadow rounded-lg">
                 <div className="p-4 border-b space-y-4 rounded-lg">
                   <div className="flex justify-between">
-
                     <div>
                       {/* Task Name*/}
                       <Link href={`/edit-task/${task.id}`}>
