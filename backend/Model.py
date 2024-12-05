@@ -8,10 +8,6 @@ class TaskModel:
   def __init__(self):
     # Empty list to store tasks
     self.tasks = []
-
-    # Empty list to store dates
-    self.dates = []
-
     # Counter to assign unique IDs to tasks
     self.task_id_counter = 1
 
@@ -74,13 +70,5 @@ class TaskModel:
     
     # If the task is not found return none
     return None
-  
-  def add_date(self, date):
-    self.dates.append(date)
-    return date
-
-  def get_dates(self):
-    return self.dates
-    # return list(self.dates)
 
      
