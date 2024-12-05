@@ -45,12 +45,3 @@ class TaskController:
       return task.to_dict()
     else:
       return {"error": "Task not found"}
-
-  def add_date(self, date):
-    try:
-      return self.model.add_date(date)
-    except ValueError as e:
-      return {"error": str(e)}
-  
-  def get_dates(self):
-    return self.model.get_dates()

@@ -81,22 +81,6 @@ def get_task_by_id(task_id):
     return jsonify(task), 404
   return jsonify(task), 200
 
-@app.route('/dates', methods=['POST'])
-def add_date():    
-  data = request.json
-  try: 
-    date = controller.add_date(data)
-    return jsonify(date), 201
-  except ValueError as e:
-    return jsonify({"error": str(e)}), 400
-
-@app.route('/dates', methods=['GET'])
-def get_dates():
-  dates = controller.get_dates()
-  if ("error" in dates):
-    return jsonify(dates), 404
-  return jsonify(dates), 200
-
 # Runs the Flask app in debug mode
 if __name__ == '__main__':
   app.run(debug=True)

@@ -3,16 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchTasks, deleteTask, fetchDates } from "../api/taskService";
+import { fetchTasks, deleteTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
-import dayjs from "dayjs";
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
-  const [dates, setDates] = useState([]);
-
-  // State for task display
-  const [taskState, setTaskState] = useState("");
 
   // State for hamburger menu visibility
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
@@ -41,24 +36,11 @@ export default function HomePage() {
   // Fetch tasks from API
   useEffect(() => {
     async function loadTasks() {
-      const fetchedDates = await fetchDates()
       const fetchedTasks = await fetchTasks();
-      setDates(fetchedDates)
       setTasks(fetchedTasks);
     }
     loadTasks();
   }, []);
-
-  const sortTasks = () => {
-    const taskDates = dates
-      .map((date, index) => ({ date, index}))
-      .sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1) // Sort by date
-      .map(item => item.index); // Get the indices after sorting
-
-    const sortedTasks = taskDates.map(index => tasks[index]);
-    return sortedTasks
-  }
-
 
   // Function to delete a task
   const handleDelete = async (taskId) => {
@@ -103,6 +85,7 @@ export default function HomePage() {
     console.log(file);
   };
 
+
   // Handle Write To File + the download
   const generateSchedule = () => {
     // Placeholder for generating the schedule file
@@ -112,8 +95,7 @@ export default function HomePage() {
   return (
     <div className="bg-gray-300 min-h-screen">
       <div className="max-w-4xl mx-auto p-4" style={{ overflowX: "hidden", overflowY: "scroll" }}>
-
-        {/* Home Page Conents */}
+        {/* Home Page Content */}
         <header className="bg-white shadow rounded-lg mb-6">
           <div className="flex justify-between items-center p-4">
             {/* Holds appbar contents */}
@@ -150,13 +132,8 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* List Of Tasks */}
-        <TaskList 
-          tasks={sortTasks()} 
-          mode={taskState}
-          onDelete={handleDelete} 
-        />
-
+        {/* List of Tasks */}
+        <TaskList tasks={tasks} onDelete={handleDelete} />
       </div>
 
       {/* Add A Task Button */}
@@ -205,7 +182,6 @@ export default function HomePage() {
                   type="button"
                   id="filterViewDailyButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
-                  onClick={() => setTaskState("daily")}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Daily</p>
                 </button>
@@ -215,7 +191,6 @@ export default function HomePage() {
                   type="button"
                   id="filterViewWeeklyButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
-                  onClick={() => setTaskState("weekly")}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Weekly</p>
                 </button>
@@ -225,7 +200,6 @@ export default function HomePage() {
                   type="button"
                   id="filterViewMonthlyButton"
                   className="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group focus:bg-gray-300"
-                  onClick={() => setTaskState("monthly")}
                 >
                   <p className="flex-1 ms-3 rtl:text-right whitespace-nowrap text-xl">Monthly</p>
                 </button>
