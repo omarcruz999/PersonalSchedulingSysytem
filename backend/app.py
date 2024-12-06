@@ -31,6 +31,7 @@ def create_task():
   start_time = data.get("start_time")
   duration = data.get("duration")
   start_date = data.get("start_date")
+  date_time = data.get("date_time")
 
   # Extracts the optional attributes
   frequency = data.get("frequency")  # For recurring tasks
@@ -46,6 +47,7 @@ def create_task():
       start_time=start_time,
       duration=duration,
       start_date=start_date, 
+      date_time=date_time,
       frequency=frequency,
       end_date=end_date,
       cancelled_task_id=cancelled_task_id,
@@ -80,22 +82,6 @@ def get_task_by_id(task_id):
   if ("error" in task):
     return jsonify(task), 404
   return jsonify(task), 200
-
-@app.route('/dates', methods=['POST'])
-def add_date():    
-  data = request.json
-  try: 
-    date = controller.add_date(data)
-    return jsonify(date), 201
-  except ValueError as e:
-    return jsonify({"error": str(e)}), 400
-
-@app.route('/dates', methods=['GET'])
-def get_dates():
-  dates = controller.get_dates()
-  if ("error" in dates):
-    return jsonify(dates), 404
-  return jsonify(dates), 200
 
 # Runs the Flask app in debug mode
 if __name__ == '__main__':

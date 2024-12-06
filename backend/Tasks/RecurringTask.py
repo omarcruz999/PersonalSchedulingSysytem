@@ -3,9 +3,9 @@ from .Task import Task
 # RecurringTask inherits from the Task Class
 class RecurringTask(Task):
   """The constructor __init__ initializes a new RecurringTask with the given task_id, title, description, and frequency."""
-  def __init__(self, task_id, title, description, start_time, duration, start_date, frequency, end_date):
+  def __init__(self, task_id, title, description, start_time, duration, start_date, date_time, frequency, end_date):
     # super calls the __init__ method of the parent class Task to initialize the task with the given task_id, title, and description
-    super().__init__(task_id, title, description, "recurring", start_time, duration, start_date)
+    super().__init__(task_id, title, description, "recurring", start_time, duration, start_date, date_time)
     # Adds an attribute frequency which stores how often the task recurs
     self.frequency = frequency  # e.g., "daily", "weekly"
     # Adds an attribute end_date which stores the date the task ends

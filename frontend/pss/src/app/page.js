@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchTasks, deleteTask, fetchDates } from "../api/taskService";
+import { fetchTasks, deleteTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
 import dayjs from "dayjs";
 
@@ -41,10 +41,10 @@ export default function HomePage() {
   // Fetch tasks from API
   useEffect(() => {
     async function loadTasks() {
-      const fetchedDates = await fetchDates()
       const fetchedTasks = await fetchTasks();
+      const fetchedDates = fetchedTasks.map(task => task.date_time)
+      setTasks(fetchedTasks);      
       setDates(fetchedDates)
-      setTasks(fetchedTasks);
     }
     loadTasks();
   }, []);
@@ -59,11 +59,12 @@ export default function HomePage() {
     return sortedTasks
   }
 
-
   // Function to delete a task
   const handleDelete = async (taskId) => {
     await deleteTask(taskId);
+    const taskIndex = tasks.findIndex(task => task.id === taskId);
     setTasks(tasks.filter((task) => task.id !== taskId));
+    setDates(dates.filter((_, index) => index !== taskIndex));
   };
 
   // Toggles the state of the hamburger menu's visibility

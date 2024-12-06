@@ -43,6 +43,7 @@ export default function TaskForm(
       start_date: startDate,
       start_time: startTime,
       duration: Number(duration),
+      date_time: `${startDate}T${startTime}:00`,
     };
 
     if (type === "recurring") {
@@ -52,7 +53,7 @@ export default function TaskForm(
       taskData.cancelled_task_id = cancelledTaskId;
     }
 
-    onSubmit(taskData, taskData.start_date, taskData.start_time);
+    onSubmit(taskData);
 
     // Reset form fields
     setTitle("");
