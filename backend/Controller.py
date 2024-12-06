@@ -7,10 +7,10 @@ class TaskController:
     self.model = TaskModel()
 
   """create_task method handles the creation of a new task"""
-  def create_task(self, task_type, title, description, start_time, duration, start_date, **kwargs):
+  def create_task(self, task_type, title, description, start_time, duration, start_date, date_time, **kwargs):
     # Call the create_task method from the model and pass the task_type, title, description, and frequency
     try:
-      task = self.model.create_task(task_type, title, description, start_time, duration, start_date, **kwargs)
+      task = self.model.create_task(task_type, title, description, start_time, duration, start_date, date_time, **kwargs)
       return task.to_dict()
     except ValueError as e:
       return {"error": str(e)}

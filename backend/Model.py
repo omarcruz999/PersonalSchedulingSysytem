@@ -8,22 +8,23 @@ class TaskModel:
   def __init__(self):
     # Empty list to store tasks
     self.tasks = []
+
     # Counter to assign unique IDs to tasks
     self.task_id_counter = 1
 
   """create_task method handles the creation of a new task"""
-  def create_task(self, task_type, title, description, start_time, duration, start_date, **kwargs):
+  def create_task(self, task_type, title, description, start_time, duration, start_date, date_time, **kwargs):
     # Creates a new task based on the type and adds it to the tasks list
     # The kwargs parameter allows for additional arguments to be passed to the method
     if task_type == "anti":
         cancelled_task_id = kwargs.get("cancelled_task_id")
-        task = AntiTask(self.task_id_counter, title, description, start_time, duration, start_date, cancelled_task_id)
+        task = AntiTask(self.task_id_counter, title, description, start_time, duration, start_date, date_time, cancelled_task_id)
     elif task_type == "recurring":
         frequency = kwargs.get("frequency")
         end_date = kwargs.get("end_date")
-        task = RecurringTask(self.task_id_counter, title, description, start_time, duration, start_date, frequency, end_date)
+        task = RecurringTask(self.task_id_counter, title, description, start_time, duration, start_date, date_time, frequency, end_date)
     elif task_type == "transient":
-        task = TransientTask(self.task_id_counter, title, description, start_time, duration, start_date)
+        task = TransientTask(self.task_id_counter, title, description, start_time, duration, start_date, date_time)
     else:
         raise ValueError("Invalid task type")
 
@@ -57,6 +58,7 @@ class TaskModel:
         task.start_time = updates.get("start_time", task.start_time)
         task.duration = updates.get("duration", task.duration)
         task.start_date = updates.get("start_date", task.start_date)
+        task.date_time = updates.get("date_time", task.date_time)
             
         # Check for specific updates for subclasses
         if isinstance(task, RecurringTask):
@@ -70,5 +72,3 @@ class TaskModel:
     
     # If the task is not found return none
     return None
-
-     

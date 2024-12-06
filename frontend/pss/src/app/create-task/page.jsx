@@ -7,7 +7,7 @@ import { createTask } from "../../api/taskService";
 export default function CreateTaskPage() {
   const router = useRouter();
 
-  const handleCreateTask = async (taskData) => {
+  const handleCreateTask = async (taskData) => { 
     await createTask(taskData);
     router.push("/"); // Redirect to homepage after task creation
   };

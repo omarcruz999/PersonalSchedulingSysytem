@@ -31,6 +31,7 @@ def create_task():
   start_time = data.get("start_time")
   duration = data.get("duration")
   start_date = data.get("start_date")
+  date_time = data.get("date_time")
 
   # Extracts the optional attributes
   frequency = data.get("frequency")  # For recurring tasks
@@ -46,6 +47,7 @@ def create_task():
       start_time=start_time,
       duration=duration,
       start_date=start_date, 
+      date_time=date_time,
       frequency=frequency,
       end_date=end_date,
       cancelled_task_id=cancelled_task_id,

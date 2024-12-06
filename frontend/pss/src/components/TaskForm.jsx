@@ -43,6 +43,7 @@ export default function TaskForm(
       start_date: startDate,
       start_time: startTime,
       duration: Number(duration),
+      date_time: `${startDate}T${startTime}:00`,
     };
 
     if (type === "recurring") {
