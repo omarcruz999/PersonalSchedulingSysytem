@@ -28,9 +28,10 @@ const EditTask = () => {
   const handleEditTask = async (updatedTaskData) => {
     try {
       await editTask(id, updatedTaskData); // Update the task with new data
+      alert("Task updated successfully!"); // Show success message
       router.push("/"); // Redirect to the homepage or task list after editing
     } catch (err) {
-      console.log("Failed to update task : ", err);
+      alert(err.message + ": Due to overlapping conflicts."); // Show error message
     }
   };
 

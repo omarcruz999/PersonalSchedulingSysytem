@@ -8,8 +8,14 @@ export default function CreateTaskPage() {
   const router = useRouter();
 
   const handleCreateTask = async (taskData) => {
-    await createTask(taskData);
-    router.push("/"); // Redirect to homepage after task creation
+    try {
+      await createTask(taskData);
+      alert("Task created successfully!"); // Show success message
+      router.push("/"); // Redirect to homepage after task creation
+    } catch (error) {
+      alert(error.message + ": Due to overlapping conflicts."); // Show error message
+    }
+
   };
 
   return (
