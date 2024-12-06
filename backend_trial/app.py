@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from sqlalchemy.sql import func
+#from sqlalchemy.sql import func
 
 #pass so it can do stuff for relative pass
 app = Flask(__name__)

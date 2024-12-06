@@ -2,7 +2,7 @@ from app import app,db
 from flask import request, jsonify
 from task import Task
 from datetime import date
-from sqlalchemy.sql import func
+#from sqlalchemy.sql import func
 
 #get all tasks
 @app.route("/api/tasks", methods=["GET"]) # GET means it is going to access all the data in the data base and retunr
