@@ -14,6 +14,7 @@ export default function CreateTaskPage() {
       router.push("/"); // Redirect to homepage after task creation
     } catch (error) {
       alert(error.message + ": Due to overlapping conflicts."); // Show error message
+      router.push("/"); // Redirect to homepage after message
     }
 
   };
