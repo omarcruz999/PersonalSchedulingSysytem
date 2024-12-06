@@ -22,8 +22,8 @@ class RecurringTask(Task):
     return task_dict
 
   """ Setters """
-  def set_frequency(frequency):
+  def set_frequency(self, frequency):
     self.frequency = frequency
   
-  def set_end_date(end_date):
+  def set_end_date(self, end_date):
     self.end_date = end_date

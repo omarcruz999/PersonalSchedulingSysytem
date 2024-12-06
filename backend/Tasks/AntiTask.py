@@ -18,5 +18,5 @@ class AntiTask(Task):
     return task_dict
 
   """ Setters """
-  def set_cancelled_task_id(cancelled_task_id):
+  def set_cancelled_task_id(self, cancelled_task_id):
     self.cancelled_task_id = cancelled_task_id
