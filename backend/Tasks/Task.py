@@ -32,6 +32,9 @@ class Task:
   def get_task_id():
     return self.task_id
   
+  def get_start_date():
+    return self.start_date
+  
   """ Setters for attributes """
   def set_task_id(self, task_id):
     self.task_id = task_id

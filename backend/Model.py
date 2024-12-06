@@ -1,7 +1,7 @@
 from Tasks.AntiTask import AntiTask
 from Tasks.RecurringTask import RecurringTask
 from Tasks.TransientTask import TransientTask
-
+from datetime import datetime, time, timedelta
 # TaskModel class represents the model of the task
 class TaskModel:
   """Constructor __init__ initializes an empty list of tasks and a task_id_counter."""
@@ -49,7 +49,16 @@ class TaskModel:
     # updates: a dictionary of attributes to update
 
     # Finds the task with the specified ID
-    for task in self.tasks: 
+    for task in self.tasks:
+
+      # Checks if the other tasks time overlap with the edited task
+      if (
+        task.get_task_id() != task_id and
+        updates.get("start_date") == task.get_start_date() and
+        hasOverlap(task.get_start_time(), task.get_duration(), updates.get("start_time", task.start_time))
+      ):
+        return None
+
       if task.get_task_id() == task_id:
         # Updates the task attributes with the new information
         task.set_title(updates.get("title", task.title))
@@ -71,4 +80,20 @@ class TaskModel:
     # If the task is not found return none
     return None
 
-     
+  """ hasOverlap method checks if there is overlap between start and end"""
+  def hasOverlap(self, startTime, duration, newTime):
+    
+    # Converts the times to datetimes
+    dateStartTime = self.getDateTime(startTime)
+    dateEndTime = datestartTime + timedelta(minutes=duration)
+    editedTime = self.getDateTime(newTime)
+
+    # Returns true if the newTime overlaps
+    return newStartTime <= editedTime <= newEndTime
+
+
+  """getDateTime method returns a string into a comparable datetime"""
+  def getDateTime(self, time):
+
+    parsed_time = datetime.strptime(time, "%H:%M").time()
+    datetime = datetime.combine(datetime.min, parsed_time)
