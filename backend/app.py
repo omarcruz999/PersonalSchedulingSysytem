@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import json
 from flask_cors import CORS
 from Controller import TaskController
 
@@ -82,6 +83,34 @@ def get_task_by_id(task_id):
   if ("error" in task):
     return jsonify(task), 404
   return jsonify(task), 200
+
+
+@app.route('/upload-schedule', methods=['POST'])
+def upload_schedule():
+  if 'file' not in request.files:
+    return jsonify({'error': 'No file part'}), 400
+  
+  file = request.files['file']
+  
+  try:
+    # Parse and validate JSON
+    schedule_data = json.load(file)
+    # Validate schedule (example: check for task overlaps or invalid data)
+    errors = validate_schedule(schedule_data)
+    
+    if errors:
+      return jsonify({'error': 'Invalid schedule', 'details': errors}), 400
+    
+    return jsonify({'message': 'Schedule uploaded successfully'})
+  except json.JSONDecodeError:
+    return jsonify({'error': 'Invalid JSON'}), 400
+  
+def validate_schedule(schedule_data):
+  errors = []
+  for task in schedule_data.get('tasks', []):
+    if 'start time' not in task or 'end_time' not in task:
+      errors.append(f"Task {task} missing start_time or end_time")
+  return errors
 
 # Runs the Flask app in debug mode
 if __name__ == '__main__':

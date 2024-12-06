@@ -99,9 +99,40 @@ export default function HomePage() {
   };
 
   // Handle Reading from File
-  const handleFileInput = (event, action) => {
-    const file = event.target.files[0];
-    console.log(file);
+  // const handleFileInput = (event, action) => {
+  //   const file = event.target.files[0];
+  //   console.log(file);
+  // };
+  const handleFileInput = async (e) => {
+    const file = e.target.files[0]; // Get the file
+    if (!file) return;  // No file selected
+
+    try {
+      const formData = new FormData();  // Create a new FormData object
+      formData.append("file", file);  // Append the file to the form data
+
+      // Send the file to the backend
+      const response = await fetch("http://localhost:5000/upload-schedule", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();  // Get the response as JSON
+      
+      if (response.ok) {
+        alert("Schedule uploaded successfully");
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("File upload failed: ", error);
+      alert("File upload failed. Please try again.");
+    }
+  };
+
+  // Update tasks after reading from file
+  const updateTasks = (newTasks) => {
+    setTasks([...tasks, ...newTasks]);
   };
 
   // Handle Write To File + the download
@@ -333,7 +364,7 @@ export default function HomePage() {
                     className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
                     id="file_input_read"
                     type="file"
-                    onChange={(e) => handleFileInput(e)}
+                    onChange={handleFileInput}
                   />
                 </div>
               )}
