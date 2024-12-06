@@ -20,13 +20,20 @@ def create_tasks():
     #take the request and convert to json
     data = request.json
 
+'''
+Looks i will have to put the .get("type") which then will allow us to see the type of task which will then have the a different set of required of inputs 
+this allow us to combine our conditionals with our task classess
+'''
     # Validations
-    required_fields = ["name","type","description", "duration","start_time","start_date"]
+    #Required is only for inputs for basic identification of a task
+    #add ID to have recurring task but with different ids toa llow adding of sam etasks
+    required_fields = ["name","type","description" ,"start_time","start_date", "duration"]
     for field in required_fields:
       #if a field is empty it will display an error
       if field not in data or not data.get(field):
         return jsonify({"error":f'Missing required field: {field}'}), 400
-
+#add ID to get specific
+#specific date to cancel for anti-task and transiet
     name = data.get("name")
     type = data.get("type")
     description = data.get("description")
