@@ -32,6 +32,7 @@ const EditTask = () => {
       router.push("/"); // Redirect to the homepage or task list after editing
     } catch (err) {
       alert(err.message + ": Due to overlapping conflicts."); // Show error message
+      router.push("/"); // Redirect to homepage after message
     }
   };
 
