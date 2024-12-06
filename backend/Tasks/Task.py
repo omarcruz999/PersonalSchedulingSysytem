@@ -29,3 +29,41 @@ class Task:
       "start_date" : self.start_date,
       "date_time" : self.date_time
     }
+    
+  """ Getters """
+  def get_task_id(self):
+    return self.task_id
+  
+  def get_start_date(self):
+    return self.start_date
+  
+  def get_duration(self):
+    return self.duration
+
+  def get_start_time(self):
+    return self.start_time
+
+  """ Setters for attributes """
+  def set_task_id(self, task_id):
+    self.task_id = task_id
+
+  def set_title(self, title):
+      self.title = title
+
+  def set_description(self, description):
+      self.description = description
+
+  def set_task_type(self, task_type):
+      self.task_type = task_type
+
+  def set_start_time(self, start_time):
+      self.start_time = start_time
+
+  def set_duration(self, duration):
+      self.duration = duration
+
+  def set_start_date(self, start_date):
+      self.start_date = start_date
+
+  
+

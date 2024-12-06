@@ -16,3 +16,7 @@ class AntiTask(Task):
     # Adds a new key-value pair to the dictionary
     task_dict["cancelled_task_id"] = self.cancelled_task_id
     return task_dict
+
+  """ Setters """
+  def set_cancelled_task_id(self, cancelled_task_id):
+    self.cancelled_task_id = cancelled_task_id

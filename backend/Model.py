@@ -1,6 +1,7 @@
 from Tasks.AntiTask import AntiTask
 from Tasks.RecurringTask import RecurringTask
 from Tasks.TransientTask import TransientTask
+from datetime import datetime, time, timedelta
 
 # TaskModel class represents the model of the task
 class TaskModel:
@@ -16,6 +17,18 @@ class TaskModel:
   def create_task(self, task_type, title, description, start_time, duration, start_date, date_time, **kwargs):
     # Creates a new task based on the type and adds it to the tasks list
     # The kwargs parameter allows for additional arguments to be passed to the method
+
+    # Checks for valid duration
+    if not self.isValidTime(start_time, duration):
+      raise Exception("Invalid duration")
+
+    # Checks to see if the start_time interferes with other tasks
+    for task in self.tasks:
+      other_start_time = task.get_start_time()
+      other_duration = task.get_duration()
+      if (task.get_start_date() == start_date and self.hasOverlap(other_start_time, other_duration, start_time, duration)):
+        raise Exception("Tasks conflicts with other tasks")
+    
     if task_type == "anti":
         cancelled_task_id = kwargs.get("cancelled_task_id")
         task = AntiTask(self.task_id_counter, title, description, start_time, duration, start_date, date_time, cancelled_task_id)
@@ -50,25 +63,84 @@ class TaskModel:
     # updates: a dictionary of attributes to update
 
     # Finds the task with the specified ID
-    for task in self.tasks: 
-      if task.task_id == task_id:
+    for task in self.tasks:
+
+      other_start_time = task.get_start_time()
+      other_duration = task.get_duration()
+      edited_start_time = updates.get("start_time", task.start_time)
+      edited_duration = updates.get("duration", task.duration)
+      
+      # Checks if the other tasks time overlap with the edited task
+      if (
+        task.get_task_id() != task_id and
+        updates.get("start_date", task.start_date) == task.get_start_date() and
+        self.hasOverlap(
+          other_start_time,
+          other_duration,
+          edited_start_time,
+          edited_duration
+        )
+      ):
+        return None
+
+      if task.get_task_id() == task_id:
+
+        # Checks to see if time is within the same day
+        edited_start_time = updates.get("start_time", task.start_time)
+        edited_duration = updates.get("duration", task.duration)
+        if not self.isValidTime(edited_start_time, edited_duration):
+          return None
+        
         # Updates the task attributes with the new information
-        task.title = updates.get("title", task.title)
-        task.description = updates.get("description", task.description)
-        task.start_time = updates.get("start_time", task.start_time)
-        task.duration = updates.get("duration", task.duration)
-        task.start_date = updates.get("start_date", task.start_date)
-        task.date_time = updates.get("date_time", task.date_time)
+        task.set_title(updates.get("title", task.title))
+        task.set_description(updates.get("description", task.description))
+        task.set_start_time(updates.get("start_time", task.start_time))
+        task.set_duration(updates.get("duration", task.duration))
+        task.set_start_date(updates.get("start_date", task.start_date))
             
         # Check for specific updates for subclasses
         if isinstance(task, RecurringTask):
-          task.frequency = updates.get("frequency", task.frequency)
-          task.end_date = updates.get("end_date", task.end_date)
+          task.set_frequency(updates.get("frequency", task.frequency))
+          task.set_end_date(updates.get("end_date", task.end_date))
         elif isinstance(task, AntiTask):
-          task.cancelled_task_id = updates.get("cancelled_task_id", task.cancelled_task_id)
+          task.set_cancelled_task_id(updates.get("cancelled_task_id", task.cancelled_task_id))
 
         # Returns the updated task
         return task
     
     # If the task is not found return none
     return None
+
+  """ hasOverlap method checks for overlap between tasks """
+  def hasOverlap(self, startTime, duration, newTime, newDuration):
+    
+    isValid = False
+
+    # Converts the times to datetimes
+    start1 = self.getDateTime(startTime)
+    end1 = start1 + timedelta(minutes=duration)
+    start2 = self.getDateTime(newTime)
+    end2 = start2 + timedelta(minutes=newDuration)
+
+    # Checks to see if the editedTime interferes with another task
+    if not (end1 <= start2 or end2 <= start1):
+      isValid = True
+    
+    return isValid
+  
+  """ isValidTime method checks to see if the time is within the same day """
+  def isValidTime(self, startTime, duration):
+
+    # Converts the times to datetimes
+    dateStartTime = self.getDateTime(startTime)
+    dateEndTime = dateStartTime + timedelta(minutes=duration)
+
+    return dateStartTime.day == dateEndTime.day
+
+
+  """getDateTime method returns a string into a comparable datetime"""
+  def getDateTime(self, time):
+
+    parsed_time = datetime.strptime(time, "%H:%M").time()
+    datetime_value = datetime.combine(datetime.min, parsed_time)
+    return datetime_value

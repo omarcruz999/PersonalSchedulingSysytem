@@ -20,3 +20,10 @@ class RecurringTask(Task):
     # Adds the end_date attribute to the dictionary
     task_dict["end_date"] = self.end_date
     return task_dict
+
+  """ Setters """
+  def set_frequency(self, frequency):
+    self.frequency = frequency
+  
+  def set_end_date(self, end_date):
+    self.end_date = end_date
