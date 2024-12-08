@@ -43,3 +43,22 @@ export async function fetchTaskById(taskId) {
   if (!response.ok) throw new Error(`Failed to fetch task with ID ${taskId}`);
   return response.json();
 }
+
+// Upload a task through a JSON file
+export async function uploadSchedule(file) {
+  // Create a new FormData object which allows you to construct a set of key/value pairs representing form fields and their values
+  const formData = new FormData(); 
+  // Append the file to the FormData object
+  formData.append("file", file);
+
+  // Send a POST request to the server with the FormData object
+  const response = await fetch(`${BASE_URL}/upload-schedule`, {
+    method: "POST",
+    body: formData,
+  });
+
+  // If the response is not OK, throw an error
+  if (!response.ok) throw new Error("Failed to upload schedule");
+  // Return the response as JSON
+  return response.json();
+}

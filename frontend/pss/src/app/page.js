@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchTasks, deleteTask } from "../api/taskService";
+import { fetchTasks, deleteTask, uploadSchedule } from "../api/taskService";
 import TaskList from "../components/TaskList";
 import dayjs from "dayjs";
 
@@ -49,14 +49,18 @@ export default function HomePage() {
     loadTasks();
   }, []);
 
+  // Function to sort tasks by date/week/month
   const sortTasks = () => {
-    const taskDates = dates
-      .map((date, index) => ({ date, index}))
+    // Create an indexed array from the tasks array
+    const taskDates = [...tasks]  // Use the spread operator to create a new array
+      .map((task, index) => ({ date: task.date_time, index})) // Map tasks to objects with date and index
       .sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1) // Sort by date
       .map(item => item.index); // Get the indices after sorting
 
+    // Use the sorted indices to map back to the tasks
     const sortedTasks = taskDates.map(index => tasks[index]);
-    return sortedTasks
+
+    return sortedTasks;
   }
 
   // Function to delete a task
@@ -99,32 +103,25 @@ export default function HomePage() {
   };
 
   // Handle Reading from File
-  // const handleFileInput = (event, action) => {
-  //   const file = event.target.files[0];
-  //   console.log(file);
-  // };
   const handleFileInput = async (e) => {
-    const file = e.target.files[0]; // Get the file
-    if (!file) return;  // No file selected
+    const file = e.target.files[0]; // Access the file from the input element
 
+    // File is being uploaded
     try {
-      const formData = new FormData();  // Create a new FormData object
-      formData.append("file", file);  // Append the file to the form data
+      const result = await uploadSchedule(file); // Pass the selected file to the uploadSchedule function
 
-      // Send the file to the backend
-      const response = await fetch("http://localhost:5000/upload-schedule", {
-        method: "POST",
-        body: formData,
-      });
+      // Check if the reponse contains a tasks property and it is an array
+      if (result.tasks && Array.isArray(result.tasks)) {
+        updateTasks(result.tasks);  // Calls the updateTasks function to update the tasks state
 
-      const result = await response.json();  // Get the response as JSON
-      
-      if (response.ok) {
-        alert("Schedule uploaded successfully");
+        // Display a success message
+        alert(result.message || "Schedule uploaded successfully!");
       } else {
-        alert(`Error: ${result.message}`);
+        // Display an error message if the tasks data is invalid
+        console.error("Invalid tasks data in response:", result);
       }
     } catch (error) {
+      // Display an error message if the file upload fails
       console.error("File upload failed: ", error);
       alert("File upload failed. Please try again.");
     }
@@ -132,7 +129,18 @@ export default function HomePage() {
 
   // Update tasks after reading from file
   const updateTasks = (newTasks) => {
-    setTasks([...tasks, ...newTasks]);
+    // Update the tasks state with the new tasks
+    setTasks((prevTasks) => {
+      // Check if the newTasks exists and is an array
+      if (!newTasks || !Array.isArray(newTasks)) {
+        // Display an error message if the newTasks is invalid and returns the previous tasks unchanged
+        console.error("Invalid newTasks format:", newTasks);
+        return prevTasks;
+      }
+      
+      // Return the previous tasks and the new tasks using the spread operator
+      return [...prevTasks, ...newTasks];
+    });
   };
 
   // Handle Write To File + the download

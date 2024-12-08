@@ -85,32 +85,88 @@ def get_task_by_id(task_id):
   return jsonify(task), 200
 
 
+# Defines an endpoint at /upload-schedule for uploading a schedule as JSON File
 @app.route('/upload-schedule', methods=['POST'])
 def upload_schedule():
-  if 'file' not in request.files:
-    return jsonify({'error': 'No file part'}), 400
-  
-  file = request.files['file']
-  
   try:
-    # Parse and validate JSON
-    schedule_data = json.load(file)
-    # Validate schedule (example: check for task overlaps or invalid data)
-    errors = validate_schedule(schedule_data)
-    
+    # Ensure the file is included in the request
+    if 'file' not in request.files:
+      # Return an error if no file is uploaded
+      return jsonify({"error": "No file uploaded"}), 400
+
+    # Load and parse the JSON file
+    file = request.files['file']  # Retrieve the uploaded file
+    schedule_data = json.load(file) # Load the JSON data using json.load
+
+    # Check if schedule_data is a list or dictionary
+    if isinstance(schedule_data, list):
+      tasks = schedule_data  # Treat it as a list of tasks
+    elif isinstance(schedule_data, dict):
+      tasks = schedule_data.get("tasks", [])  # Extract tasks from a dictionary
+    else:
+      # Return an error if the JSON data is not a list or dictionary
+      return jsonify({"error": "Invalid JSON format"}), 400
+
+    # Validate the tasks
+    if not isinstance(tasks, list):
+      # Return an error if tasks is not a list
+      return jsonify({"error": "Invalid JSON format: 'tasks' should be an array"}), 400
+
+    # Create tasks and collect results
+    created_tasks = []  # List to store created tasks
+    errors = [] # List to store errors for invalid tasks
+
+    # Iterate over each task in the tasks list
+    for index, task_data in enumerate(tasks):
+      try:
+        # Extract required and optional fields
+        task_type = task_data.get("task_type")
+        title = task_data.get("title")
+        description = task_data.get("description")
+        start_time = task_data.get("start_time")
+        duration = task_data.get("duration")
+        start_date = task_data.get("start_date")
+        date_time = task_data.get("date_time")
+        frequency = task_data.get("frequency")  # For recurring tasks
+        end_date = task_data.get("end_date")  # For recurring tasks
+        cancelled_task_id = task_data.get("cancelled_task_id")  # For anti-tasks
+
+        # Create the task by calling controller.create_task
+        task = controller.create_task(
+          task_type=task_type,
+          title=title,
+          description=description,
+          start_time=start_time,
+          duration=duration,
+          start_date=start_date,
+          date_time=date_time,
+          frequency=frequency,
+          end_date=end_date,
+          cancelled_task_id=cancelled_task_id,
+        )
+        
+        # Add the created task to the list
+        created_tasks.append(task)
+      except ValueError as e:
+        # Collect errors for invalid tasks
+        errors.append(f"Task {index + 1}: {str(e)}")
+
+    # If any tasks failed to process it returns the list of errors
     if errors:
-      return jsonify({'error': 'Invalid schedule', 'details': errors}), 400
-    
-    return jsonify({'message': 'Schedule uploaded successfully'})
+      return jsonify({"error": "Invalid schedule", "details": errors}), 400
+
+    # If all tasks are processed successfully, it returns a success message and the list of created tasks
+    return jsonify({
+      "message": "Schedule uploaded successfully!",
+      "tasks": created_tasks
+    }), 201
   except json.JSONDecodeError:
-    return jsonify({'error': 'Invalid JSON'}), 400
-  
-def validate_schedule(schedule_data):
-  errors = []
-  for task in schedule_data.get('tasks', []):
-    if 'start time' not in task or 'end_time' not in task:
-      errors.append(f"Task {task} missing start_time or end_time")
-  return errors
+    # Return an error if the JSON data is invalid
+    return jsonify({"error": "Invalid JSON format"}), 400
+  except Exception as e:
+    # Return an internal server error if an unexpected error occurs
+    return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
 
 # Runs the Flask app in debug mode
 if __name__ == '__main__':
