@@ -34,6 +34,9 @@ class Task:
   def get_task_id(self):
     return self.task_id
   
+  def get_task_type(self):
+    return self.task_type
+  
   def get_start_date(self):
     return self.start_date
   

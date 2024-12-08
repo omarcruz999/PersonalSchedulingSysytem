@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import TaskForm from "../../components/TaskForm";
-import { createTask } from "../../api/taskService";
+import { createTask, deleteTask } from "../../api/taskService";
 import dayjs from "dayjs";
 
 export default function CreateTaskPage() {
@@ -42,8 +42,22 @@ export default function CreateTaskPage() {
         router.push("/"); // Redirect to homepage after message
       }
     }
-    else if(taskData.type === "anti-task"){
-      
+    else if(taskData.type === "anti"){
+      try{
+        const antiTask = await createTask(taskData)
+        alert("Task created successfully!"); // Show success message
+
+        // Deletes the associated recurring task if it exists
+        const recurTaskID = antiTask.cancelled_task_id
+        if (recurTaskID !== 0){
+          await deleteTask(recurTaskID)
+          alert("A task was deleted")
+        }
+        router.push("/"); // Redirect to homepage after task creation
+      } catch (error) {
+        alert(error.message + ": Due to overlapping conflicts."); // Show error message
+        router.push("/"); // Redirect to homepage after message
+      }
     }
 
   };
