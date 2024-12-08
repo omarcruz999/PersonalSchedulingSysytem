@@ -2,6 +2,9 @@ from app import app,db
 from flask import request, jsonify
 from task import Task
 from datetime import date
+from antiTask import AntiTask
+from recurringTask import RecurringTask
+from transientTask import TransientTask
 #from sqlalchemy.sql import func
 
 #get all tasks
@@ -18,52 +21,75 @@ def get_tasks():
 def create_tasks():
   try:
     #take the request and convert to json
-    data = request.json
-
-'''
-Looks i will have to put the .get("type") which then will allow us to see the type of task which will then have the a different set of required of inputs 
-this allow us to combine our conditionals with our task classess
-'''
-    # Validations
-    #Required is only for inputs for basic identification of a task
-    #add ID to have recurring task but with different ids toa llow adding of sam etasks
-    required_fields = ["name","type","description" ,"start_time","start_date", "duration"]
-    for field in required_fields:
-      #if a field is empty it will display an error
-      if field not in data or not data.get(field):
-        return jsonify({"error":f'Missing required field: {field}'}), 400
+    data = request.json    
 #add ID to get specific
 #specific date to cancel for anti-task and transiet
+    id = data.get("id")
     name = data.get("name")
     type = data.get("type")
     description = data.get("description")
     start_time = data.get("start_time")
     start_date = str(date.today())
     duration = data.get("duartion")
-
-   
+    end_date = data.get("end_date")
+    frequency = data.get("frequency")
+    cancel_date = data.get("cancel_date")
     #creating the task with all intial inputs 
     #this allows us to create our task based on the task that is happening
     #Leave this for reference
-    '''
+    
     if type == "recurring":
-      new_tasks = Task(name=name, type="recurring", description=description, start_time= start_time, start_date=start_date, duration = duration)
-    elif type == "transient":
-      new_tasks = Task(name=name, type="transient", description=description, start_time= start_time, start_date=start_date, duration = duration)
-    elif type == "anti-task":
-      new_tasks = Task(name=name, type="anti-task", description=description, start_time= start_time, start_date=start_date, duration = duration)
-    else:
-      new_tasks = Task(name=name, type=type, description=description, start_time= start_time, start_date=start_date, duration = duration)
-      
-'''
+      # Validations
+    #Required is only for inputs for basic identification of a task
+    #add ID to have recurring task but with different ids toa llow adding of same tasks
+      required_fields = ["name","type","description" ,"start_time","start_date", "duration","frequency"]
+      for field in required_fields:
+      #if a field is empty it will display an error
+        if field not in data or not data.get(field):
+          return jsonify({"error":f'Missing required field: {field}'}), 400
+      new_tasks = RecurringTask(name=name, type="recurring", description=description, start_time= start_time, start_date=start_date, duration = duration, frequency = frequency)
 
-    new_tasks = Task(name=name, type=type, description=description, start_time=start_time, start_date=start_date, duration = duration)
+    elif type == "transient":
+      # Validations
+    #Required is only for inputs for basic identification of a task
+    #add ID to have recurring task but with different ids toa llow adding of same tasks
+      required_fields = ["name","type","description" ,"start_time","start_date", "duration"]
+      for field in required_fields:
+      #if a field is empty it will display an error
+        if field not in data or not data.get(field):
+          return jsonify({"error":f'Missing required field: {field}'}), 400
+      new_tasks = TransientTask(name=name, type="transient", description=description, start_time= start_time, start_date=start_date, duration = duration,end_date = end_date)
+
+
+    elif type == "anti-task":
+      # Validations
+    #Required is only for inputs for basic identification of a task
+    #add ID to have recurring task but with different ids toa llow adding of same tasks
+      required_fields = ["name","type","description" ,"start_time","start_date", "duration"]
+      for field in required_fields:
+        #if a field is empty it will display an error
+        if field not in data or not data.get(field):
+          return jsonify({"error":f'Missing required field: {field}'}), 400
+      new_tasks = AntiTask(name=name, type="anti-task", description=description, start_time= start_time, start_date=start_date, duration = duration, cancel_date = cancel_date)
+
+
+    else:
+      # Validations
+    #Required is only for inputs for basic identification of a task
+    #add ID to have recurring task but with different ids toa llow adding of same tasks
+      required_fields = ["name","type","description" ,"start_time","start_date", "duration"]
+      for field in required_fields:
+      #if a field is empty it will display an error
+        if field not in data or not data.get(field):
+          return jsonify({"error":f'Missing required field: {field}'}), 400
+      new_tasks = Task(name=name, type=type, description=description, start_time= start_time, start_date=start_date, duration = duration)
+    
 #like git add.
     db.session.add(new_tasks) 
     #like git commit
     db.session.commit()
 #some resource is being created 
-    return jsonify({"message":"Task created"}), 201
+    return jsonify({"message":"Task created", "type":type }), 201
     
   except Exception as e:
     #rollback to previus state
@@ -107,10 +133,19 @@ def update_friend(name):
     task.start_date = data.get("start_date",task.start_date)
     task.duration = data.get("duration",task.duration)
 
-
-
     db.session.commit()
     return jsonify(task.to_json()),200
   except Exception as e:
     db.session.rollback()
     return jsonify({"error":str(e)}),500
+
+# Get a specific task
+@app.route("/user/<int:id>")
+def user_detail(id):
+    user = User.query.get_or_404(id)
+    return {
+        "name": Task.name,
+        "type": Task.type,
+        "description": User.descritption,
+      
+    }
