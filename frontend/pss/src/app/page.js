@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { fetchTasks, deleteTask } from "../api/taskService";
 import TaskList from "../components/TaskList";
 import dayjs from "dayjs";
+import isBetween from 'dayjs/plugin/isBetween'
+dayjs.extend(isBetween)
 
 export default function HomePage() {
   const [tasks, setTasks] = useState([]);
@@ -107,10 +109,135 @@ export default function HomePage() {
     console.log(file);
   };
 
-  // Handle Write To File + the download
-  const generateSchedule = () => {
-    // Placeholder for generating the schedule file
-    console.log(fileName, startDate, timePeriod);
+  // Formats the duration of the tasks for json file 
+  const formatDuration = (duration) => {
+    let result = 0.0;
+    let calc = duration / 15;
+
+    // Add .25 to result for every 15 minutes 
+    for (let i = 1; i <= calc; i++) {
+      result += .25;
+    }
+
+    // Return result with two decimal places
+    return result.toFixed(2);
+  };
+
+  // Formats the start time of the tasks for json file 
+  const formatStartTime = (startTime) => {
+    // Split the original startTime 
+    let originalTime = startTime.split(':');
+
+    // Call formatDuration to format the minutes and split it so '0.' is not included
+    let newTime = formatDuration(originalTime[1]).split('.');
+
+    // Return the original hours with the new minutes
+    return originalTime[0] + "." + newTime[1];
+
+  }
+
+  // Adds task information to the string holding the contents of the JSON file
+  const appendTaskInfo = (tasks) => {
+    // Holds task information for json file download
+    let data = "[\n";
+
+    // For each task append its information to data
+    tasks.forEach(task => {
+
+      if (task.task_type === "recurring") {
+        data +=
+          `  {
+    "Name" : "${task.title}",
+    "Type" : "${task.task_type}",
+    "Start Date" : ${(task.start_date).replaceAll('-', '')},
+    "StartTime" : ${formatStartTime(task.start_time)},
+    "Duration" : ${formatDuration(task.duration)},
+    "End Date" : ${(task.end_date).replaceAll('-', '')},
+    "Frequency" : ${task.frequency == "daily" ? 1 : 7}
+  },\n`
+
+      } else if (task.task_type == "transient"){
+
+        data +=
+          `  {
+    "Name" : "${task.title}",
+    "Type" : "${task.task_type}",
+    "Date" : ${(task.start_date).replaceAll('-', '')},
+    "StartTime" : ${formatStartTime(task.start_time)},
+    "Duration" : ${formatDuration(task.duration)}
+  },\n`
+      }
+    });
+
+    data = data.slice(0, -2); // remove comma after last task is added to data
+    
+    // If data is empty, do not add the last bracket 
+    if(!data === "")
+      data += "\n]"
+
+    // Return string filled with task information
+    return data;
+  }
+
+  async function writeScheduleToFile() {
+
+    // If there are no tasks, alert the user and abort
+    if (tasks.length <= 0) {
+      alert("Failed to write to file. \nAt least one task must be created to write to a file.")
+      return;
+    } else {
+
+      // Array of sorted tasks
+      const tasks = sortTasks();
+
+      // Date that user selects to mark as beginning of file time period 
+      const selectedDate = dayjs(startDate);
+
+      // Array that contains the tasks that fall in the selected time period 
+      let filteredTasks = [];
+
+      // Filter tasks based on the time period the user selects - only include tasks within time period
+      switch (timePeriod) {
+
+        case "day":
+          const endDate = dayjs(selectedDate);
+          filteredTasks = tasks.filter(task => dayjs(task.start_date).isSame(selectedDate, 'day'));
+          break;
+
+        case "week":
+          const startOfWeek = selectedDate.startOf('week');
+          const endOfWeek = selectedDate.endOf('week');
+          filteredTasks = tasks.filter(task => dayjs(task.start_date).isBetween(startOfWeek, endOfWeek, null, []));
+          break;
+
+        case "month":
+          const startOfMonth = selectedDate.startOf('month');
+          const endOfMonth = selectedDate.endOf('month');
+          filteredTasks = tasks.filter(task => dayjs(task.start_date).isSame(selectedDate, 'month'));
+          break;
+
+      }
+
+      // Adds all task information into data string to be written to json 
+      let data = appendTaskInfo(filteredTasks);
+
+      // Create blob 
+      const blob = new Blob([data], { type: 'text/plain' });
+
+      // Create URL pointing to the data
+      const url = window.URL.createObjectURL(blob);
+
+      // Create download link and trigger it 
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${fileName}.json`);
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -306,7 +433,7 @@ export default function HomePage() {
                     {/* Show download button once file name is entered */}
                     {fileName && (
                       <button
-                        onClick={generateSchedule}
+                        onClick={writeScheduleToFile}
                         className="mt-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
                       >
                         Download File
