@@ -25,12 +25,16 @@ export default function CreateTaskPage() {
       const frequency = modified_data.frequency === "daily" ? 1 : 7;
       
       try{
-
+        
         // Checks to see if the start_date is <= the end_date
         while (start_date.isBefore(end_date) || start_date.isSame(end_date)){
           
           // Update the modifed_data object with new start_date
-          modified_data.start_date = start_date.format("YYYY-MM-DD")
+          let formatStartDate = start_date.format("YYYY-MM-DD")
+          modified_data.start_date = formatStartDate
+
+          // Update the date_time used to sort tasks
+          modified_data.date_time = formatStartDate + "T" + modified_data.start_time
           await createTask(modified_data)
           start_date = start_date.add(frequency, "day")
 

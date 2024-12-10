@@ -50,13 +50,16 @@ export default function HomePage() {
   }, []);
 
   const sortTasks = () => {
-    const taskDates = dates
-      .map((date, index) => ({ date, index}))
+    // Create an indexed array from the tasks array
+    const taskDates = [...tasks]  // Use the spread operator to create a new array
+      .map((task, index) => ({ date: task.date_time, index})) // Map tasks to objects with date and index
       .sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1) // Sort by date
       .map(item => item.index); // Get the indices after sorting
 
+    // Use the sorted indices to map back to the tasks
     const sortedTasks = taskDates.map(index => tasks[index]);
-    return sortedTasks
+
+    return sortedTasks;
   }
 
   // Function to delete a task
