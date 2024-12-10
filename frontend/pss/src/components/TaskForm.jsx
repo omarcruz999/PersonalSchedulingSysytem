@@ -162,23 +162,6 @@ export default function TaskForm(
           )}
         </div>
 
-        {/* Cancelled Task ID Field for Anti-Tasks */}
-        {type === "anti" && (
-          <div>
-              <label htmlFor="addCancelledTaskId" className="block mb-2 text-sm font-medium text-white">
-                  Cancelled Task ID
-              </label>
-              <input
-                  type="text"
-                  id="addCancelledTaskId"
-                  value={cancelledTaskId}
-                  onChange={(e) => setCancelledTaskId(e.target.value)}
-                  placeholder="Enter Cancelled Task ID"
-                  className="border text-sm rounded-lg block w-full p-2.5 bg-gray-600 border-gray-500 text-white"
-              />
-          </div>
-        )}
-
         {/* Start Date and End Date Fields */}
         <div className="flex justify-between space-x-4">
           {/* Start Date */}
