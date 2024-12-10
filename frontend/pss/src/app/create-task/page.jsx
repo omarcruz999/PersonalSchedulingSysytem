@@ -19,7 +19,7 @@ export default function CreateTaskPage() {
 
       // Makes the loop run once if transient
       if (taskData.type === "transient")
-        start_date = end_date
+        end_date = start_date
 
       // Count incrementer for the frequency
       const frequency = modified_data.frequency === "daily" ? 1 : 7;
