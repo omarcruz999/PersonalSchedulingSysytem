@@ -34,6 +34,23 @@ export default function TaskForm(
     }
   }, [initialValues]);
 
+  const recurringKeywords = ["Class", "Study", "Sleep", "Exercise", "Work", "Meal"]
+  const transientKeywords = ["Visit", "Shopping", "Appointment"]
+  const antiKeywords = ["Cancellation"]
+
+  useEffect(() => {
+
+    if(recurringKeywords.includes(title)){
+      setType("recurring")
+    }
+    else if(transientKeywords.includes(title)){
+      setType("transient")
+    }
+    else if(antiKeywords.includes(title)){
+      setType("anti")
+    }
+  }, [title]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const taskData = { 

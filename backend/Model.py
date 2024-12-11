@@ -23,14 +23,19 @@ class TaskModel:
       raise Exception("Invalid duration")
 
     # Checks to see if the start_time interferes with other tasks
+    cancelled_task_id = 0
     for task in self.tasks:
       other_start_time = task.get_start_time()
       other_duration = task.get_duration()
-      if (task.get_start_date() == start_date and self.hasOverlap(other_start_time, other_duration, start_time, duration)):
+
+      # Checks to see if non anti tasks have the same date and overlaps
+      if (task_type != "anti" and task.get_start_date() == start_date and self.hasOverlap(other_start_time, other_duration, start_time, duration)):
         raise Exception("Tasks conflicts with other tasks")
+      # Checks to see if anti-tasks have the same date, time, and duration as a recurring tasks
+      elif (task_type == "anti" and task.get_task_type() == "recurring" and task.get_start_date() == start_date and task.get_start_time() == start_time and task.get_duration() == duration):
+        cancelled_task_id = task.get_task_id()
     
     if task_type == "anti":
-        cancelled_task_id = kwargs.get("cancelled_task_id")
         task = AntiTask(self.task_id_counter, title, description, start_time, duration, start_date, date_time, cancelled_task_id)
     elif task_type == "recurring":
         frequency = kwargs.get("frequency")

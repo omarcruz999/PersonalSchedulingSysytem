@@ -2,18 +2,66 @@
 
 import { useRouter } from "next/navigation";
 import TaskForm from "../../components/TaskForm";
-import { createTask } from "../../api/taskService";
+import { createTask, deleteTask } from "../../api/taskService";
+import dayjs from "dayjs";
 
 export default function CreateTaskPage() {
   const router = useRouter();
 
   const handleCreateTask = async (taskData) => {
-    try {
-      await createTask(taskData);
-      alert("Task created successfully!"); // Show success message
-      router.push("/"); // Redirect to homepage after task creation
-    } catch (error) {
-      alert(error.message + ": Due to overlapping conflicts."); // Show error message
+
+    if (taskData.type === "recurring" || taskData.type === "transient"){
+
+      // Create a clone of the taskData to modify the start_date for recurring tasks
+      let modified_data = { ...taskData };
+      let start_date = dayjs(modified_data.start_date);
+      let end_date = dayjs(modified_data.end_date);
+
+      // Makes the loop run once if transient
+      if (taskData.type === "transient")
+        end_date = start_date
+
+      // Count incrementer for the frequency
+      const frequency = modified_data.frequency === "daily" ? 1 : 7;
+      
+      try{
+        
+        // Checks to see if the start_date is <= the end_date
+        while (start_date.isBefore(end_date) || start_date.isSame(end_date)){
+          
+          // Update the modifed_data object with new start_date
+          let formatStartDate = start_date.format("YYYY-MM-DD")
+          modified_data.start_date = formatStartDate
+
+          // Update the date_time used to sort tasks
+          modified_data.date_time = formatStartDate + "T" + modified_data.start_time
+          await createTask(modified_data)
+          start_date = start_date.add(frequency, "day")
+
+        }
+        alert("Task(s) created successfully!"); // Show success message
+        router.push("/"); // Redirect to homepage after task creation
+      } catch (error) {
+        alert(error.message + ": Due to overlapping conflicts."); // Show error message
+        router.push("/"); // Redirect to homepage after message
+      }
+    }
+    else if(taskData.type === "anti"){
+      try{
+        const antiTask = await createTask(taskData)
+        alert("Task created successfully!"); // Show success message
+
+        // Deletes the associated recurring task if it exists
+        const recurTaskID = antiTask.cancelled_task_id
+        if (recurTaskID !== 0){
+          await deleteTask(recurTaskID)
+          alert("A task was deleted")
+        }
+        router.push("/"); // Redirect to homepage after task creation
+      } catch (error) {
+        alert(error.message + ": Due to overlapping conflicts."); // Show error message
+        router.push("/"); // Redirect to homepage after message
+      }
     }
 
   };
