@@ -13,6 +13,11 @@ class Task(db.Model):
     name = db.Column(db.String(100), nullable = False)
     type = db.Column(db.String(100), nullable = False)
     description = db.Column(db.Text, nullable =False)
+    #dates need to be formatted in the YYYYMMDD
+    '''
+    The month value must range from 01 to 12, and the day must
+    range from 01 through the number of days in that month (for that year)
+    '''
     start_date = db.Column(db.String(11), nullable = False)
     #test changed to Treu
     start_time = db.Column(db.String(10),nullable=True)

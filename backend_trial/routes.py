@@ -10,12 +10,19 @@ from transientTask import TransientTask
 #get all tasks
 @app.route("/api/tasks", methods=["GET"]) # GET means it is going to access all the data in the data base and retunr
 def get_tasks():
-    #return all tasks in database "SELECT * FROM tasks " THIS is basically whats running in python 
-    tasks = Task.query.all()
-    #convert to json to return to client 
-    result = [tasks.to_json() for tasks in tasks]
-    # basciallty putting it in json format  [{...}, {...}]
-    return jsonify(result)
+    tasks = db.session.query(Task).outerjoin(RecurringTask, Task.id == RecurringTask.id).outerjoin(TransientTask, Task.id == TransientTask.id).outerjoin(AntiTask, Task.id == AntiTask.id).all()
+     # Convert tasks to JSON 
+    result = [] 
+    for task in tasks: 
+      if isinstance(task, RecurringTask): 
+        result.append(task.to_json()) 
+      elif isinstance(task, TransientTask): 
+        result.append(task.to_json()) 
+      elif isinstance(task, AntiTask): 
+        result.append(task.to_json()) 
+      else: result.append(task.to_json()) 
+    # For basic Task objects 
+      return jsonify(result)
 
 @app.route("/api/tasks",methods=["POST"])
 def create_tasks():
@@ -47,7 +54,7 @@ def create_tasks():
       #if a field is empty it will display an error
         if field not in data or not data.get(field):
           return jsonify({"error":f'Missing required field: {field}'}), 400
-      new_tasks = RecurringTask(name=name, type="recurring", description=description, start_time= start_time, start_date=start_date, duration = duration, frequency = frequency)
+      new_tasks = RecurringTask(name=name, type="recurring", description=description, start_time= start_time, start_date=start_date, duration = duration, frequency = frequency, end_date=end_date)
 
     elif type == "transient":
       # Validations
@@ -84,11 +91,11 @@ def create_tasks():
           return jsonify({"error":f'Missing required field: {field}'}), 400
       new_tasks = Task(name=name, type=type, description=description, start_time= start_time, start_date=start_date, duration = duration)
     
-#like git add.
+    #like git add.
     db.session.add(new_tasks) 
     #like git commit
     db.session.commit()
-#some resource is being created 
+    #some resource is being created 
     return jsonify({"message":"Task created", "type":type }), 201
     
   except Exception as e:
@@ -149,3 +156,14 @@ def user_detail(id):
         "description": User.descritption,
       
     }
+
+
+#This only access one table which should be helpful in terms of what type of tasks we should see
+# @app.route("/api/tasks/<string:name>",methods=["GET"])
+# def delete_tasks(name):
+#   try:
+#     #look for name 
+#     tasks = name.query.all()
+#     result = [tasks.to_json() for tasks in tasks]
+#     # basciallty putting it in json format  [{...}, {...}]
+#     return jsonify(result)
