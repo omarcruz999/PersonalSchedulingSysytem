@@ -12,6 +12,12 @@ class RecurringTask(Task,db.Model):
     #MAKESURE TO USE TIME DELTA FOR INTERBALS FOR RECURRING TASK TO BE ABLE TO REDO IT 
     frequency = db.Column(db.Integer(),nullable = True)
     end_date = db.Column(db.Integer(),nullable = True)
+    id = db.Column(None,db.ForeignKey(Task.id),primary_key = True)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "Recurring",
+        
+    }
     def to_json(self):
         json_data = super().to_json()
         json_data.update({

@@ -7,22 +7,13 @@ from recurringTask import RecurringTask
 from transientTask import TransientTask
 #from sqlalchemy.sql import func
 
-#get all tasks
-@app.route("/api/tasks", methods=["GET"]) # GET means it is going to access all the data in the data base and retunr
+# Defines an ednpoint at /tasks for any GET requests
+@app.route('/api/tasks', methods=['GET'])
 def get_tasks():
-    tasks = db.session.query(Task).outerjoin(RecurringTask, Task.id == RecurringTask.id).outerjoin(TransientTask, Task.id == TransientTask.id).outerjoin(AntiTask, Task.id == AntiTask.id).all()
-     # Convert tasks to JSON 
-    result = [] 
-    for task in tasks: 
-      if isinstance(task, RecurringTask): 
-        result.append(task.to_json()) 
-      elif isinstance(task, TransientTask): 
-        result.append(task.to_json()) 
-      elif isinstance(task, AntiTask): 
-        result.append(task.to_json()) 
-      else: result.append(task.to_json()) 
-    # For basic Task objects 
-      return jsonify(result)
+  # Retrieves all the tasks
+  tasks = Task.query.all()
+  # Returns the tasks as a JSON response
+  return jsonify(tasks), 200
 
 @app.route("/api/tasks",methods=["POST"])
 def create_tasks():
