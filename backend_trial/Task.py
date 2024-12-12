@@ -6,7 +6,7 @@ from datetime import datetime
 #Superclass
 class Task(db.Model):
     # we need from the task its name task type , date, start time , duration 
-   
+    __tablename__ = "Task"
 
     # True makes it option False makes it mandatory
     id = db.Column(db.Integer(),primary_key=True)
@@ -25,8 +25,9 @@ class Task(db.Model):
     duration = db.Column(db.Integer,nullable = True)
 
     __mapper_args__ = {
-        "polymorphic_identity": "Task",
         "polymorphic_on": "type",
+        "polymorphic_identity": "Task",
+        
     }
 
     def to_json(self):

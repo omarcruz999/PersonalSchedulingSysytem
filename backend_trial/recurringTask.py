@@ -1,8 +1,8 @@
 from task import Task
 from app import db
-class RecurringTask(Task,db.Model):
+class RecurringTask(Task):
     #1 (daily) , 7(weekly)
-
+    
     '''
     For a recurring task, the End Date does not have to be a date in which the
     task would recur. For example, if this is a weekly recurring task with a start
@@ -14,8 +14,9 @@ class RecurringTask(Task,db.Model):
     end_date = db.Column(db.Integer(),nullable = True)
     id = db.Column(None,db.ForeignKey(Task.id),primary_key = True)
 
+# Polymorphic identity is what identifies what differentianes between all classes called the discrimnator column
     __mapper_args__ = {
-        "polymorphic_identity": "Recurring",
+        "polymorphic_identity": "recurring",
         
     }
     def to_json(self):

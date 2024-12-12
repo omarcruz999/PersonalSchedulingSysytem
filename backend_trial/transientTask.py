@@ -2,10 +2,13 @@ from task import Task
 from app import db
 
 class TransientTask(Task):
+    
     end_date = db.Column(db.String(11), nullable = False)
     id = db.Column(None,db.ForeignKey(Task.id),primary_key = True)
+
+    # Polymorphic identity is what identifies what differentianes between all classes called the discrimnator column
     __mapper_args__ = {
-        "polymorphic_identity": "Transient",
+        "polymorphic_identity": "transient",
         
     }
 

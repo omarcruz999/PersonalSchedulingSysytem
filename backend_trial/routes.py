@@ -7,13 +7,14 @@ from recurringTask import RecurringTask
 from transientTask import TransientTask
 #from sqlalchemy.sql import func
 
-# Defines an ednpoint at /tasks for any GET requests
-@app.route('/api/tasks', methods=['GET'])
+@app.route("/api/tasks", methods=["GET"]) # GET means it is going to access all the data in the data base and retunr
 def get_tasks():
-  # Retrieves all the tasks
-  tasks = Task.query.all()
-  # Returns the tasks as a JSON response
-  return jsonify(tasks), 200
+    #return all tasks in database "SELECT * FROM tasks " THIS is basically whats running in python 
+    tasks = Task.query.all()
+    #convert to json to return to client 
+    result = [tasks.to_json() for tasks in tasks]
+    # basciallty putting it in json format  [{...}, {...}]
+    return jsonify(result)
 
 @app.route("/api/tasks",methods=["POST"])
 def create_tasks():
@@ -72,15 +73,7 @@ def create_tasks():
 
 
     else:
-      # Validations
-    #Required is only for inputs for basic identification of a task
-    #add ID to have recurring task but with different ids toa llow adding of same tasks
-      required_fields = ["name","type","description" ,"start_time","start_date", "duration"]
-      for field in required_fields:
-      #if a field is empty it will display an error
-        if field not in data or not data.get(field):
-          return jsonify({"error":f'Missing required field: {field}'}), 400
-      new_tasks = Task(name=name, type=type, description=description, start_time= start_time, start_date=start_date, duration = duration)
+      return jsonify({"error":"No type was entered"}), 500
     
     #like git add.
     db.session.add(new_tasks) 
