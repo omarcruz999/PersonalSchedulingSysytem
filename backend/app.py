@@ -88,6 +88,7 @@ def get_task_by_id(task_id):
 # Defines an endpoint at /upload-schedule for uploading a schedule as JSON File
 @app.route('/upload-schedule', methods=['POST'])
 def upload_schedule():
+  
   try:
     # Ensure the file is included in the request
     if 'file' not in request.files:
