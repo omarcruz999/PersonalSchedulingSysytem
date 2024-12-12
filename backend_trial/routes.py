@@ -91,11 +91,11 @@ def create_tasks():
 #Delete tasks
 # might have to delete task by name 
 #<string:name> is to specifically get that primary key in our task which is the name of the task 
-@app.route("/api/tasks/<string:name>",methods=["DELETE"])
+@app.route("/api/tasks/<int:id>",methods=["DELETE"])
 def delete_tasks(name):
   try:
     #look for name 
-    tasks = Task.query.get(name)
+    tasks = Task.query.get(id)
     if tasks is None:
       return jsonify({"error":"tasks is not found"}),404
     
@@ -108,7 +108,7 @@ def delete_tasks(name):
   
 # Update a task
 #This allows us to get the name of task and return all the data and we can update to what we want 
-@app.route("/api/friends/<string:name>",methods=["PATCH"])
+@app.route("/api/friends/<int:id>",methods=["PATCH"])
 def update_friend(name):
   try:
     task = Task.query.get(name)
@@ -130,16 +130,6 @@ def update_friend(name):
     db.session.rollback()
     return jsonify({"error":str(e)}),500
 
-# Get a specific task
-@app.route("/user/<int:id>")
-def user_detail(id):
-    user = User.query.get_or_404(id)
-    return {
-        "name": Task.name,
-        "type": Task.type,
-        "description": User.descritption,
-      
-    }
 
 
 #This only access one table which should be helpful in terms of what type of tasks we should see
