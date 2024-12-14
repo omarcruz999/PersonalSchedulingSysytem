@@ -1,0 +1,11 @@
+[
+  {
+  "Name" : "Take a walk",
+  "Type" : "Exercise",
+  "Date" : 20200515,
+  "StartTime" : 10.25,
+  "Duration" : 0.75,
+  "EndDate" : 20200715,
+  "Frequency" : 1
+  }
+]

@@ -48,6 +48,7 @@ export default function HomePage() {
       setTasks(fetchedTasks);      
       setDates(fetchedDates)
     }
+    console.log("tasks:", fetchTasks());
     loadTasks();
   }, []);
 

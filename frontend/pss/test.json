@@ -1,0 +1,19 @@
+{
+  "message": "Schedule uploaded successfully!",
+  "tasks": [
+    {
+      "Name": "Quick Meeting",
+      "Type": "Visit",
+      "StartTime": "18:45",
+      "Duration": 15,
+      "Date": "2024-12-07"
+    },
+    {
+      "Name": "TEST SCHEDULE",
+      "Type": "transient",
+      "StartTime": "20:45",
+      "Duration": 15,
+      "Date": "2025-01-08"    
+    }
+  ]
+}

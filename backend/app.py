@@ -117,32 +117,58 @@ def upload_schedule():
     created_tasks = []  # List to store created tasks
     errors = [] # List to store errors for invalid tasks
 
+    # Allowed types for task_type classification
+    TRANSIENT_TYPES = {"Visit", "Shopping", "Appointment"}
+    RECURRING_TYPES = {"Class", "Study", "Sleep", "Exercise", "Work", "Meal"}
+    ANTI_TASK_TYPES = {"Cancellation"}
+
     # Iterate over each task in the tasks list
-    for index, task_data in enumerate(tasks):
+    for index, task_data in enumerate(tasks, start=1):
       try:
+        # Assign a dynamic ID
+        task_id = index
+        
         # Extract required and optional fields
-        task_type = task_data.get("task_type")
-        title = task_data.get("title")
-        description = task_data.get("description")
-        start_time = task_data.get("start_time")
-        duration = task_data.get("duration")
-        start_date = task_data.get("start_date")
-        date_time = task_data.get("date_time")
-        frequency = task_data.get("frequency")  # For recurring tasks
-        end_date = task_data.get("end_date")  # For recurring tasks
+        task_type = task_data.get("Type")
+        
+        # Validate and classify task_type
+        if task_type in TRANSIENT_TYPES:
+          task_type = "transient"
+        elif task_type in RECURRING_TYPES:
+          task_type = "recurring"
+        elif task_type in ANTI_TASK_TYPES:
+          task_type = "anti"
+        else:
+          # Default task type if unrecognized
+          task_type = "transient"  # Defaulting to transient as an example
+        
+        title = task_data.get("Name")
+        # description = task_data.get("description")
+        start_time = task_data.get("StartTime")
+        duration = task_data.get("Duration")
+        
+        # try: 
+        start_date = task_data.get("Date")
+        
+        # date_time = task_data.get("date_time")
+        if task_type == "recurring":
+          frequency = task_data.get("Frequency")  # For recurring tasks
+          end_date = task_data.get("EndDate")  # For recurring tasks
         cancelled_task_id = task_data.get("cancelled_task_id")  # For anti-tasks
+
 
         # Create the task by calling controller.create_task
         task = controller.create_task(
+          task_id=task_id,
           task_type=task_type,
           title=title,
-          description=description,
-          start_time=start_time,
-          duration=duration,
-          start_date=start_date,
-          date_time=date_time,
-          frequency=frequency,
-          end_date=end_date,
+          description="",
+          start_time=format_start_time(start_time),
+          duration=format_duration(duration),
+          start_date=format_date(start_date),
+          date_time="",
+          frequency=format_frequency(frequency),
+          end_date=format_date(end_date),
           cancelled_task_id=cancelled_task_id,
         )
         
@@ -167,6 +193,78 @@ def upload_schedule():
   except Exception as e:
     # Return an internal server error if an unexpected error occurs
     return jsonify({"error": "Internal server error", "details": str(e)}), 500
+
+# Formats the duration of the tasks for JSON file
+def format_duration(duration):
+    """
+    Formats the Duration to minutes as an integer.
+    Accepts:
+    - A float representing fractional hours (e.g., 0.75 -> 45 minutes)
+    - An integer already in minutes (e.g., 15)
+    """
+    if isinstance(duration, float):
+        # Convert fractional hours to minutes
+        return int(duration * 60)
+    elif isinstance(duration, int):
+        # Assume Duration is already in minutes
+        return duration
+    else:
+        raise ValueError(f"Invalid Duration format: {duration}")
+
+
+# Formats the start time of the tasks for JSON file
+def format_start_time(start_time):
+  """
+  Formats the StartTime to "HH:MM" format.
+  Accepts:
+  - A float representing fractional hours (e.g., 10.25 -> "10:15")
+  - A string already in "HH:MM" format (e.g., "18:45")
+  """
+  if isinstance(start_time, float):
+    # Convert fractional hours to "HH:MM"
+    hours = int(start_time)
+    minutes = int((start_time - hours) * 60)
+    return f"{hours:02}:{minutes:02}"
+  elif isinstance(start_time, str):
+    # Assume StartTime is already in "HH:MM" format
+    return start_time
+  else:
+    raise ValueError(f"Invalid StartTime format: {start_time}")
+
+# Formats the date of the tasks for JSON file
+def format_date(date):
+  """
+  Formats the Date to "YYYY-MM-DD" format.
+  Accepts:
+  - An integer in "YYYYMMDD" format (e.g., 20200415 -> "2020-04-15")
+  - A string already in "YYYY-MM-DD" format (e.g., "2024-12-07")
+  """
+  if isinstance(date, int):
+    # Convert integer date (YYYYMMDD) to "YYYY-MM-DD"
+    year = date // 10000
+    month = (date % 10000) // 100
+    day = date % 100
+    return f"{year:04}-{month:02}-{day:02}"
+  elif isinstance(date, str):
+    # Assume Date is already in "YYYY-MM-DD" format
+    return date
+  else:
+    raise ValueError(f"Invalid Date format: {date}")
+
+def format_frequency(frequency):
+  """
+  Converts an integer frequency value to the corresponding string value.
+  Accepts:
+  - An integer (e.g., 7 -> "weekly", 1 -> "daily").
+  Returns:
+  - A string representing the frequency ("weekly" or "daily").
+  """
+  if frequency == 7:
+    return "weekly"
+  elif frequency == 1:
+    return "daily"
+  else:
+    raise ValueError(f"Invalid Frequency value: {frequency}. Allowed values are 1 (daily) or 7 (weekly).")
 
 
 # Runs the Flask app in debug mode
