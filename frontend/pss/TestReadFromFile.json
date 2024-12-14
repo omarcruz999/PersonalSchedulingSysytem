@@ -1,0 +1,27 @@
+{
+  "message": "Schedule uploaded successfully!",
+  "tasks": [
+    {
+      "id": 1,
+      "title": "TEST Transient",
+      "description": "Testing the transient task",
+      "task_type": "transient",
+      "start_time": "18:45",
+      "duration": 15,
+      "start_date": "2024-12-07",
+      "date_time": "2024-12-07T18:45:00"
+    },
+    {
+      "id": 2,
+      "title": "TEST Recurring",
+      "description": "Testing the recurring task",
+      "task_type": "recurring",
+      "start_time": "20:45",
+      "duration": 15,
+      "start_date": "2025-01-08",
+      "date_time": "2025-01-08T20:45:00",
+      "end_date": "2025-02-08",
+      "frequency" : "weekly"
+    }
+  ]
+}
